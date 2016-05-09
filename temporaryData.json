@@ -1,15 +1,13 @@
 {
   "ids": {
-    "Subscription": 5,
-    "Customer": 1
+    "Customer": 5
   },
   "models": {
-    "Subscription": {
-      "1": "{\"id\":1,\"name\":\"basic\",\"plugins\":[\"compose\",\"manage\"]}",
-      "2": "{\"id\":2,\"name\":\"bronze\",\"plugins\":[\"compose\",\"manage\",\"monitor\"]}",
-      "3": "{\"id\":3,\"name\":\"silver\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\"]}",
-      "4": "{\"id\":4,\"name\":\"gold\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\",\"optimize\"]}"
-    },
-    "Customer": {}
+    "Customer": {
+      "1": "{\"name\":\"basic\",\"plugins\":[\"compose\",\"manage\"],\"id\":1}",
+      "2": "{\"name\":\"bronze\",\"plugins\":[\"compose\",\"manage\",\"monitor\"],\"id\":2}",
+      "3": "{\"name\":\"silver\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\"],\"id\":3}",
+      "4": "{\"name\":\"gold\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\",\"optimize\"],\"id\":4}"
+    }
   }
 }

@@ -10,8 +10,10 @@
       "type": "string",
       "required": true
     },
-    "subscription_id": {
-      "type": "string",
+    "plugins": {
+      "type": [
+        "string"
+      ],
       "required": true
     }
   },
