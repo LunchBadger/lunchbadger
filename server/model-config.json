@@ -13,12 +13,12 @@
       "./mixins"
     ]
   },
-  "subscription": {
-    "dataSource": null,
+  "Subscription": {
+    "dataSource": "db",
     "public": true
   },
-  "user": {
-    "dataSource": null,
+  "Customer": {
+    "dataSource": "db",
     "public": true
   }
 }

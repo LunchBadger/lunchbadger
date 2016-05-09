@@ -1,0 +1,15 @@
+{
+  "ids": {
+    "Subscription": 5,
+    "Customer": 1
+  },
+  "models": {
+    "Subscription": {
+      "1": "{\"id\":1,\"name\":\"basic\",\"plugins\":[\"compose\",\"manage\"]}",
+      "2": "{\"id\":2,\"name\":\"bronze\",\"plugins\":[\"compose\",\"manage\",\"monitor\"]}",
+      "3": "{\"id\":3,\"name\":\"silver\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\"]}",
+      "4": "{\"id\":4,\"name\":\"gold\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\",\"optimize\"]}"
+    },
+    "Customer": {}
+  }
+}
