@@ -1,7 +1,7 @@
 {
   "name": "lunchbadger",
   "version": "1.0.0",
-  "main": "server/server.js",
+  "main": "bin/build.js",
   "scripts": {
     "start": "node .",
     "pretest": "jshint .",
@@ -15,7 +15,9 @@
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^2.4.0",
     "loopback-datasource-juggler": "^2.39.0",
-    "serve-favicon": "^2.0.1"
+    "rimraf": "^2.5.2",
+    "serve-favicon": "^2.0.1",
+    "shelljs": "^0.7.0"
   },
   "devDependencies": {
     "jshint": "^2.5.6",
