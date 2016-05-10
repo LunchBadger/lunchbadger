@@ -1,13 +1,10 @@
 {
   "ids": {
-    "Customer": 5
+    "Customer": 2
   },
   "models": {
     "Customer": {
-      "1": "{\"name\":\"basic\",\"plugins\":[\"compose\",\"manage\"],\"id\":1}",
-      "2": "{\"name\":\"bronze\",\"plugins\":[\"compose\",\"manage\",\"monitor\"],\"id\":2}",
-      "3": "{\"name\":\"silver\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\"],\"id\":3}",
-      "4": "{\"name\":\"gold\",\"plugins\":[\"compose\",\"manage\",\"monitor\",\"monetize\",\"optimize\"],\"id\":4}"
+      "1": "{\"name\":\"Kamil\",\"plugins\":[\"compose\",\"manage\"],\"id\":1}"
     }
   }
 }

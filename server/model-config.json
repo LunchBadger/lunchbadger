@@ -16,9 +16,5 @@
   "Customer": {
     "dataSource": "db",
     "public": true
-  },
-  "Plan": {
-    "dataSource": "db",
-    "public": true
   }
 }
