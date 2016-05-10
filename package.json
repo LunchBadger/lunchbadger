@@ -1,11 +1,13 @@
 {
   "name": "lunchbadger",
   "version": "1.0.0",
-  "main": "bin/build.js",
+  "main": "server/server",
   "scripts": {
+    "install": "npm run dist",
     "start": "node .",
     "pretest": "jshint .",
-    "posttest": "nsp check"
+    "posttest": "nsp check",
+    "dist": "node ./bin/build"
   },
   "dependencies": {
     "compression": "^1.0.3",

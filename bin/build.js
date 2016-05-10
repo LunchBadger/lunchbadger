@@ -25,7 +25,7 @@ if (!fs.existsSync('./client/index.html') || args.indexOf('force') > -1) {
 
 // remove tmp
   exec('rimraf ./tmp/*');
+} else {
+  echo('App is already installed, to start run npm start');
+  echo('To reinstall type npm run dist force');
 }
-
-// start the server
-exec('node ./server/server');
