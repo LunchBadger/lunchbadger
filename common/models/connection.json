@@ -1,5 +1,5 @@
 {
-  "name": "PublicEndpoint",
+  "name": "Connection",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -12,13 +12,17 @@
       "required": false,
       "defaultFn": "uuidv4"
     },
-    "name": {
+    "fromId": {
       "type": "string",
       "required": true
     },
-    "url": {
+    "toId": {
       "type": "string",
       "required": true
+    },
+    "info": {
+      "type": "object",
+      "required": false
     }
   },
   "validations": [],

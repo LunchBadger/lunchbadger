@@ -40,5 +40,13 @@
   "PrivateModel": {
     "dataSource": "db",
     "public": false
+  },
+  "Connection": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PrivateModelProperty": {
+    "dataSource": "db",
+    "public": false
   }
 }

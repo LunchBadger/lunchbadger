@@ -7,8 +7,9 @@
   },
   "properties": {
     "id": {
-      "id": true,
       "type": "string",
+      "id": true,
+      "required": false,
       "defaultFn": "uuidv4"
     },
     "name": {
@@ -67,6 +68,15 @@
       "type": "embedsMany",
       "model": "PublicEndpoint",
       "property": "publicEndpoints",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "connection": {
+      "type": "embedsMany",
+      "model": "Connection",
+      "property": "connections",
       "options": {
         "validate": true,
         "forceId": false

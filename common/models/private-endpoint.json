@@ -7,8 +7,9 @@
   },
   "properties": {
     "id": {
-      "id": true,
       "type": "string",
+      "id": true,
+      "required": false,
       "defaultFn": "uuidv4"
     },
     "name": {
