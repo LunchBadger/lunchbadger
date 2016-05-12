@@ -11,6 +11,10 @@
       "type": "string",
       "defaultFn": "uuidv4"
     },
+    "name": {
+      "type": "string",
+      "required": true
+    },
     "rootPath": {
       "type": "string",
       "required": true
