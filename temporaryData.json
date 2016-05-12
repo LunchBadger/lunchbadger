@@ -1,10 +1,10 @@
 {
   "ids": {
-    "Customer": 2
+    "Project": 2
   },
   "models": {
-    "Customer": {
-      "1": "{\"name\":\"Kamil\",\"plugins\":[\"compose\",\"manage\"],\"id\":1}"
+    "Project": {
+      "1b864860-3bb8-4ddb-9a47-563a57c31dd1": "{\"id\":\"1b864860-3bb8-4ddb-9a47-563a57c31dd1\",\"name\":\"Project 01\"}"
     }
   }
 }

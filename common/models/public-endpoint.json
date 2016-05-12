@@ -1,19 +1,22 @@
 {
-  "name": "Customer",
+  "name": "PublicEndpoint",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
+    "id": {
+      "id": true,
+      "type": "string",
+      "defaultFn": "uuidv4"
+    },
     "name": {
       "type": "string",
       "required": true
     },
-    "plugins": {
-      "type": [
-        "string"
-      ],
+    "url": {
+      "type": "string",
       "required": true
     }
   },
