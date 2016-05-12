@@ -17,7 +17,17 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "public-endpoints": {
+      "type": "embedsMany",
+      "model": "PublicEndpoint",
+      "property": "publicEndpoints",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
   "acls": [],
   "methods": {}
 }

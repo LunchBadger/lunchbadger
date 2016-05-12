@@ -17,7 +17,62 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "data-source": {
+      "type": "embedsMany",
+      "model": "DataSource",
+      "property": "dataSources",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "private-endpoint": {
+      "type": "embedsMany",
+      "model": "PrivateEndpoint",
+      "property": "privateEndpoints",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "private-model": {
+      "type": "embedsMany",
+      "model": "PrivateModel",
+      "property": "privateModels",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "api": {
+      "type": "embedsMany",
+      "model": "API",
+      "property": "apis",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "gateway": {
+      "type": "embedsMany",
+      "model": "Gateway",
+      "property": "gateways",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "public-endpoint": {
+      "type": "embedsMany",
+      "model": "PublicEndpoint",
+      "property": "publicEndpoints",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
   "acls": [],
   "methods": {}
 }
