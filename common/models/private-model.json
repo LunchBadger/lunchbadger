@@ -22,7 +22,17 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "private-model-properties": {
+      "type": "embedsMany",
+      "model": "PrivateModelProperty",
+      "property": "privateModelProperties",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
   "acls": [],
   "methods": {}
 }
