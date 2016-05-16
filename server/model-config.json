@@ -48,5 +48,9 @@
   "PrivateModelProperty": {
     "dataSource": "db",
     "public": false
+  },
+  "Pipeline": {
+    "dataSource": "db",
+    "public": false
   }
 }

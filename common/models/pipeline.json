@@ -1,5 +1,5 @@
 {
-  "name": "Gateway",
+  "name": "Pipeline",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -15,24 +15,10 @@
     "name": {
       "type": "string",
       "required": true
-    },
-    "rootPath": {
-      "type": "string",
-      "required": true
     }
   },
   "validations": [],
-  "relations": {
-    "pipeline": {
-      "type": "embedsMany",
-      "model": "Pipeline",
-      "property": "pipelines",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    }
-  },
+  "relations": {},
   "acls": [],
   "methods": {}
 }
