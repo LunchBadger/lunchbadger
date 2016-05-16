@@ -1,0 +1,28 @@
+{
+  "name": "Connection",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "fromId": {
+      "type": "string",
+      "required": true
+    },
+    "toId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

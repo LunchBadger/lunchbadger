@@ -1,0 +1,34 @@
+{
+  "name": "API",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "public-endpoints": {
+      "type": "embedsMany",
+      "model": "PublicEndpoint",
+      "property": "publicEndpoints",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

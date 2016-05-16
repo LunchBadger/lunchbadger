@@ -1,0 +1,38 @@
+{
+  "name": "Gateway",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "rootPath": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "pipeline": {
+      "type": "embedsMany",
+      "model": "Pipeline",
+      "property": "pipelines",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

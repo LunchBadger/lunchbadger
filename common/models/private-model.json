@@ -1,0 +1,38 @@
+{
+  "name": "PrivateModel",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "contextPath": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "private-model-properties": {
+      "type": "embedsMany",
+      "model": "PrivateModelProperty",
+      "property": "privateModelProperties",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
