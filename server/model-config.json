@@ -52,5 +52,13 @@
   "Pipeline": {
     "dataSource": "db",
     "public": false
+  },
+  "Forecast": {
+    "dataSource": "db",
+    "public": true
+  },
+  "ForecastValue": {
+    "dataSource": "db",
+    "public": false
   }
 }
