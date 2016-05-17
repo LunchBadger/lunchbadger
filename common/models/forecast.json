@@ -1,0 +1,39 @@
+{
+  "name": "Forecast",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "apiId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "api": {
+      "type": "belongsTo",
+      "model": "API",
+      "foreignKey": "apiId"
+    },
+    "forecast-values": {
+      "type": "embedsMany",
+      "model": "ForecastValue",
+      "property": "values",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

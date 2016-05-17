@@ -1,0 +1,39 @@
+{
+  "name": "ForecastValue",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "required": false,
+      "defaultFn": "uuidv4"
+    },
+    "date": {
+      "type": "string",
+      "required": true
+    },
+    "existing": {
+      "type": "number"
+    },
+    "new": {
+      "type": "number"
+    },
+    "upgrades": {
+      "type": "number"
+    },
+    "downgrades": {
+      "type": "number"
+    },
+    "churn": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
