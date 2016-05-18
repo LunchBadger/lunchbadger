@@ -60,5 +60,13 @@
   "ForecastValue": {
     "dataSource": "db",
     "public": false
+  },
+  "Plan": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Tier": {
+    "dataSource": "db",
+    "public": false
   }
 }
