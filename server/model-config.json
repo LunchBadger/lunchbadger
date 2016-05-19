@@ -57,10 +57,6 @@
     "dataSource": "db",
     "public": true
   },
-  "ForecastValue": {
-    "dataSource": "db",
-    "public": false
-  },
   "Plan": {
     "dataSource": "db",
     "public": false
@@ -74,6 +70,18 @@
     "public": false
   },
   "ForecastAPIPlan": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanDetails": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanSubscribers": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanParameters": {
     "dataSource": "db",
     "public": false
   }

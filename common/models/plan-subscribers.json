@@ -1,0 +1,34 @@
+{
+  "name": "PlanSubscribers",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "existing": {
+      "type": "number",
+      "default": "0"
+    },
+    "new": {
+      "type": "number",
+      "default": "0"
+    },
+    "upgrades": {
+      "type": "number",
+      "default": "0"
+    },
+    "downgrades": {
+      "type": "number",
+      "default": "0"
+    },
+    "churn": {
+      "type": "number",
+      "default": "0"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

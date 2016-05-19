@@ -1,0 +1,22 @@
+{
+  "name": "PlanParameters",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "callsPerSubscriber": {
+      "type": "number",
+      "default": "0"
+    },
+    "cashPerCall": {
+      "type": "number",
+      "default": "0"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

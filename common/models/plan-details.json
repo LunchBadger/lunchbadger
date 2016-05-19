@@ -1,5 +1,5 @@
 {
-  "name": "Plan",
+  "name": "PlanDetails",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -12,30 +12,26 @@
       "required": false,
       "defaultFn": "uuidv4"
     },
-    "name": {
-      "type": "string",
-      "required": true
-    },
-    "icon": {
+    "date": {
       "type": "string",
       "required": true
     }
   },
   "validations": [],
   "relations": {
-    "_details": {
+    "_subscribers": {
       "type": "embedsMany",
-      "model": "PlanDetails",
-      "property": "details",
+      "model": "PlanSubscribers",
+      "property": "subscribers",
       "options": {
         "validate": true,
         "forceId": false
       }
     },
-    "_tiers": {
+    "_parameters": {
       "type": "embedsMany",
-      "model": "Tier",
-      "property": "tiers",
+      "model": "PlanParameters",
+      "property": "parameters",
       "options": {
         "validate": true,
         "forceId": false
