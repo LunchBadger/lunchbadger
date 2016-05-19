@@ -1,6 +1,6 @@
 {
-  "name": "Forecast",
-  "base": "PersistedModel",
+  "name": "ForecastAPIPlan",
+  "base": "Plan",
   "idInjection": false,
   "options": {
     "validateUpsert": true
@@ -15,10 +15,10 @@
   },
   "validations": [],
   "relations": {
-    "forecast-api": {
-      "type": "embedsOne",
-      "model": "ForecastAPI",
-      "property": "api",
+    "forecast-values": {
+      "type": "embedsMany",
+      "model": "ForecastValue",
+      "property": "values",
       "options": {
         "validate": true,
         "forceId": false
