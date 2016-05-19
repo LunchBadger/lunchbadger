@@ -20,7 +20,7 @@
   "validations": [],
   "relations": {
     "_subscribers": {
-      "type": "embedsMany",
+      "type": "embedsOne",
       "model": "PlanSubscribers",
       "property": "subscribers",
       "options": {
@@ -29,7 +29,7 @@
       }
     },
     "_parameters": {
-      "type": "embedsMany",
+      "type": "embedsOne",
       "model": "PlanParameters",
       "property": "parameters",
       "options": {
