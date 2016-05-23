@@ -11,6 +11,18 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
+    },
+    "conditionFrom": {
+      "type": "number"
+    },
+    "conditionTo": {
+      "type": "number"
+    },
+    "type": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
     }
   },
   "validations": [],
