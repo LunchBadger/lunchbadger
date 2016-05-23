@@ -11,22 +11,20 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
-    },
-    "name": {
-      "type": "string",
-      "required": true
-    },
-    "totals": {
-      "type": "string",
-      "required": true
-    },
-    "charge": {
-      "type": "number",
-      "required": true
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "_details": {
+      "type": "embedsMany",
+      "model": "TierDetails",
+      "property": "details",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    }
+  },
   "acls": [],
   "methods": {}
 }

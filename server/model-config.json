@@ -84,5 +84,9 @@
   "PlanParameters": {
     "dataSource": "db",
     "public": false
+  },
+  "TierDetails": {
+    "dataSource": "db",
+    "public": false
   }
 }
