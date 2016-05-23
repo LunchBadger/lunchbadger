@@ -1,5 +1,5 @@
 {
-  "name": "Forecast",
+  "name": "Tier",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -11,14 +11,26 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
+    },
+    "conditionFrom": {
+      "type": "number"
+    },
+    "conditionTo": {
+      "type": "number"
+    },
+    "type": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
     }
   },
   "validations": [],
   "relations": {
-    "forecast-api": {
-      "type": "embedsOne",
-      "model": "ForecastAPI",
-      "property": "api",
+    "_details": {
+      "type": "embedsMany",
+      "model": "TierDetails",
+      "property": "details",
       "options": {
         "validate": true,
         "forceId": false

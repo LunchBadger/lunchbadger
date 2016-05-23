@@ -1,5 +1,5 @@
 {
-  "name": "ForecastValue",
+  "name": "PlanParameters",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -12,24 +12,13 @@
       "required": false,
       "defaultFn": "uuidv4"
     },
-    "date": {
-      "type": "string",
-      "required": true
+    "callsPerSubscriber": {
+      "type": "number",
+      "default": "0"
     },
-    "existing": {
-      "type": "number"
-    },
-    "new": {
-      "type": "number"
-    },
-    "upgrades": {
-      "type": "number"
-    },
-    "downgrades": {
-      "type": "number"
-    },
-    "churn": {
-      "type": "number"
+    "cashPerCall": {
+      "type": "number",
+      "default": "0"
     }
   },
   "validations": [],

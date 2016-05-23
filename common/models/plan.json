@@ -1,5 +1,5 @@
 {
-  "name": "API",
+  "name": "Plan",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -15,23 +15,27 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "icon": {
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],
   "relations": {
-    "_plans": {
+    "_details": {
       "type": "embedsMany",
-      "model": "Plan",
-      "property": "plans",
+      "model": "PlanDetails",
+      "property": "details",
       "options": {
         "validate": true,
         "forceId": false
       }
     },
-    "public-endpoints": {
+    "_tiers": {
       "type": "embedsMany",
-      "model": "PublicEndpoint",
-      "property": "publicEndpoints",
+      "model": "Tier",
+      "property": "tiers",
       "options": {
         "validate": true,
         "forceId": false

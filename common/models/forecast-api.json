@@ -1,5 +1,5 @@
 {
-  "name": "Forecast",
+  "name": "ForecastAPI",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -11,14 +11,18 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
+    },
+    "name": {
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],
   "relations": {
-    "forecast-api": {
-      "type": "embedsOne",
-      "model": "ForecastAPI",
-      "property": "api",
+    "forecast-plans": {
+      "type": "embedsMany",
+      "model": "ForecastAPIPlan",
+      "property": "plans",
       "options": {
         "validate": true,
         "forceId": false

@@ -1,5 +1,5 @@
 {
-  "name": "Forecast",
+  "name": "PlanDetails",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -11,14 +11,27 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
+    },
+    "date": {
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],
   "relations": {
-    "forecast-api": {
+    "_subscribers": {
       "type": "embedsOne",
-      "model": "ForecastAPI",
-      "property": "api",
+      "model": "PlanSubscribers",
+      "property": "subscribers",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "_parameters": {
+      "type": "embedsOne",
+      "model": "PlanParameters",
+      "property": "parameters",
       "options": {
         "validate": true,
         "forceId": false

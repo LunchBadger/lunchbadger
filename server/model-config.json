@@ -57,7 +57,35 @@
     "dataSource": "db",
     "public": true
   },
-  "ForecastValue": {
+  "Plan": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Tier": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ForecastAPI": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ForecastAPIPlan": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanDetails": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanSubscribers": {
+    "dataSource": "db",
+    "public": false
+  },
+  "PlanParameters": {
+    "dataSource": "db",
+    "public": false
+  },
+  "TierDetails": {
     "dataSource": "db",
     "public": false
   }
