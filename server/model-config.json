@@ -88,5 +88,9 @@
   "TierDetails": {
     "dataSource": "db",
     "public": false
+  },
+  "Upgrade": {
+    "dataSource": "db",
+    "public": false
   }
 }

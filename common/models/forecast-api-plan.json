@@ -11,6 +11,11 @@
       "id": true,
       "required": false,
       "defaultFn": "uuidv4"
+    },
+    "changed": {
+      "type": "boolean",
+      "required": false,
+      "default": false
     }
   },
   "validations": [],

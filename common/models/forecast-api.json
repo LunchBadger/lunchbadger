@@ -27,6 +27,15 @@
         "validate": true,
         "forceId": false
       }
+    },
+    "plan-upgrades": {
+      "type": "embedsMany",
+      "model": "Upgrade",
+      "property": "upgrades",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
     }
   },
   "acls": [],
