@@ -27,6 +27,11 @@
     "value": {
       "type": "number",
       "required": true
+    },
+    "downgrade": {
+      "type": "boolean",
+      "required": false,
+      "default": false
     }
   },
   "validations": [],
