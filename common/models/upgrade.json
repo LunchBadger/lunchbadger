@@ -13,12 +13,12 @@
       "defaultFn": "uuidv4"
     },
     "fromPlanId": {
-      "type": "string",
-      "required": true
+      "type": "any",
+      "required": false
     },
     "toPlanId": {
-      "type": "string",
-      "required": true
+      "type": "any",
+      "required": false
     },
     "date": {
       "type": "string",
