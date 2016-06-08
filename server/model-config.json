@@ -92,5 +92,9 @@
   "Upgrade": {
     "dataSource": "db",
     "public": false
+  },
+  "State": {
+    "dataSource": "db",
+    "public": false
   }
 }

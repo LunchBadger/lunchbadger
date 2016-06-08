@@ -81,6 +81,15 @@
         "validate": true,
         "forceId": false
       }
+    },
+    "state": {
+      "type": "embedsMany",
+      "model": "State",
+      "property": "states",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
     }
   },
   "acls": [],
