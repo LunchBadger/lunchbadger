@@ -27,22 +27,6 @@
     },
     "value": {
       "type": "number"
-    },
-    "conditionFromChanged": {
-      "type": "boolean",
-      "default": false
-    },
-    "conditionToChanged": {
-      "type": "boolean",
-      "default": false
-    },
-    "typeChanged": {
-      "type": "boolean",
-      "default": false
-    },
-    "valueChanged": {
-      "type": "boolean",
-      "default": false
     }
   },
   "validations": [],
