@@ -35,6 +35,11 @@
     "password": {
       "type": "string",
       "required": true
+    },
+    "itemOrder": {
+      "type": "number",
+      "required": true,
+      "default": 0
     }
   },
   "validations": [],
