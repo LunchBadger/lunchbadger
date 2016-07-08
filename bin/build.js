@@ -16,7 +16,12 @@ if (!fs.existsSync('./client/index.html') || args.indexOf('force') > -1) {
 // build container (verify and install)
   cd('lunchbadger-container');
   echo('Installing application, please wait...');
-  exec('npm install --silent && npm run dist');
+
+  if (args.indexOf('local') > -1) {
+    exec('npm install --silent && npm run dist:local');
+  } else {
+    exec('npm install --silent && npm run dist');
+  }
 
 // copy dist
   cd('..');
