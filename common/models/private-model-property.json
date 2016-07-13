@@ -13,8 +13,7 @@
       "defaultFn": "uuidv4"
     },
     "propertyKey": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "propertyValue": {
       "type": "string"
