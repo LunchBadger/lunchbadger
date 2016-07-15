@@ -11,7 +11,7 @@ if (!fs.existsSync('./client/index.html') || args.indexOf('force') > -1) {
   cd('tmp');
 
 // pull container
-  exec('git clone git@gitlab.neoteric.eu:LunchBadger/lunchbadger-container.git >/dev/null 2>&1');
+  exec('git clone git@github.com:LunchBadger/lunchbadger-container.git >/dev/null 2>&1');
 
 // build container (verify and install)
   cd('lunchbadger-container');
