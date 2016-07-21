@@ -1,5 +1,5 @@
 {
-  "name": "Pipeline",
+  "name": "Policy",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -13,21 +13,14 @@
       "defaultFn": "uuidv4"
     },
     "name": {
-      "type": "string",
-      "required": true
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {
-    "policies": {
-      "type": "embedsMany",
-      "model": "Policy",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    }
-  },
+  "relations": {},
   "acls": [],
   "methods": {}
 }
