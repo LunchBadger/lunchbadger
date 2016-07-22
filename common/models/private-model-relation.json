@@ -1,5 +1,5 @@
 {
-  "name": "Pipeline",
+  "name": "PrivateModelRelation",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -12,22 +12,18 @@
       "required": false,
       "defaultFn": "uuidv4"
     },
-    "name": {
-      "type": "string",
-      "required": true
+    "relationType": {
+      "type": "string"
+    },
+    "relationForeignKey": {
+      "type": "string"
+    },
+    "relationModel": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {
-    "policies": {
-      "type": "embedsMany",
-      "model": "Policy",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    }
-  },
+  "relations": {},
   "acls": [],
   "methods": {}
 }
