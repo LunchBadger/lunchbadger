@@ -24,6 +24,30 @@
       "type": "number",
       "required": true,
       "default": 0
+    },
+    "base": {
+      "type": "string",
+      "required": true,
+      "default": "Model"
+    },
+    "plural": {
+      "type": "string",
+      "required": false
+    },
+    "readOnly": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "public": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "strict": {
+      "type": "boolean",
+      "required": true,
+      "default": false
     }
   },
   "validations": [],
@@ -32,6 +56,15 @@
       "type": "embedsMany",
       "model": "PrivateModelProperty",
       "property": "privateModelProperties",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "private-model-relations": {
+      "type": "embedsMany",
+      "model": "PrivateModelRelation",
+      "property": "privateModelRelations",
       "options": {
         "validate": true,
         "forceId": false
