@@ -55,7 +55,17 @@
         "forceId": false
       }
     },
-    "gateway": {
+    "portal": {
+      "type": "embedsMany",
+      "model": "Portal",
+      "property": "portals",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
+    "gateway":
+    {
       "type": "embedsMany",
       "model": "Gateway",
       "property": "gateways",

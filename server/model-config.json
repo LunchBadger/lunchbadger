@@ -96,5 +96,9 @@
   "State": {
     "dataSource": "db",
     "public": false
+  },
+  "Portal": {
+    "dataSource": "db",
+    "public": false
   }
 }
