@@ -16,7 +16,7 @@
       "type": "string",
       "required": true
     },
-    "contextPath": {
+    "url": {
       "type": "string",
       "required": true
     },
