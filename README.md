@@ -6,6 +6,20 @@ and after the installation, the container with all plugins is being downloaded a
 
 If `node_modules` are already present (app is installed) you can simply start it with `npm start` command inside root.
 
+List of all available commands:
+
+```
+# creates dist version of app
+npm run dist
+
+# recreates dist version of app when one is already available
+npm run dist force
+
+# creates or recreates dist version of app using local configuration (from dev environment)
+npm run dist local
+npm run dist force local
+```
+
 ### Skipping client installation
 
 If you want to use LunchBadger API to start loopback api instance only, without creating and waiting for client app to build
