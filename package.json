@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server/server",
   "scripts": {
-    "postinstall": "npm run dist",
+    "client": "npm run dist",
     "start": "node .",
     "pretest": "jshint .",
     "posttest": "nsp check",
