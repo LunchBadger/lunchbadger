@@ -19,28 +19,10 @@
   },
   "validations": [],
   "relations": {
-    "data-source": {
-      "type": "embedsMany",
-      "model": "DataSource",
-      "property": "dataSources",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    },
     "private-endpoint": {
       "type": "embedsMany",
       "model": "PrivateEndpoint",
       "property": "privateEndpoints",
-      "options": {
-        "validate": true,
-        "forceId": false
-      }
-    },
-    "private-model": {
-      "type": "embedsMany",
-      "model": "PrivateModel",
-      "property": "privateModels",
       "options": {
         "validate": true,
         "forceId": false

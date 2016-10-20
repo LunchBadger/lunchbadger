@@ -17,10 +17,6 @@
     "dataSource": "db",
     "public": true
   },
-  "DataSource": {
-    "dataSource": "db",
-    "public": false
-  },
   "Gateway": {
     "dataSource": "db",
     "public": false
@@ -37,19 +33,7 @@
     "dataSource": "db",
     "public": false
   },
-  "PrivateModel": {
-    "dataSource": "db",
-    "public": false
-  },
   "Connection": {
-    "dataSource": "db",
-    "public": false
-  },
-  "PrivateModelProperty": {
-    "dataSource": "db",
-    "public": false
-  },
-  "PrivateModelRelation": {
     "dataSource": "db",
     "public": false
   },
