@@ -16,7 +16,7 @@
       "type": "string",
       "required": true
     },
-    "url": {
+    "path": {
       "type": "string",
       "required": true
     },
