@@ -1,4 +1,5 @@
 const async = require('async');
+const debug = require('debug')('lunchbadger-workspace:project');
 
 module.exports = function(Project) {
 
@@ -10,9 +11,11 @@ module.exports = function(Project) {
         this._deleteAllModels(callback);
       },
       callback => {
+        debug(`deleting all data sources`);
         wsModels.DataSourceDefinition.destroyAll(callback);
       },
       callback => {
+        debug(`deleting all model configs`);
         wsModels.ModelConfig.destroyAll(callback);
       }
     ], (err, res) => {
@@ -41,9 +44,12 @@ module.exports = function(Project) {
         wsModels.ModelDefinition.find(callback);
       },
       (modelDefs, callback) => {
-        let tasks = modelDefs.map(model => modelDelCb => {
-          model.delete(modelDelCb);
-        })
+        let tasks = modelDefs
+          .filter(model => model.facetName === 'server')
+          .map(model => modelDelCb => {
+            debug(`deleting model definition for ${model.id}`);
+            model.delete(modelDelCb);
+          });
         async.series(tasks, callback);
       }
     ], cb);
