@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const nodemon = require('nodemon');
+const debug = require('debug')('lunchbadger-workspace:workspace');
 
 process.env.WORKSPACE_DIR = path.normalize(path.join(__dirname, '../../workspace'));
 const workspace = require('loopback-workspace');
@@ -21,6 +23,7 @@ module.exports = function(app, cb) {
   });
 
   ensureWorkspace(workspace, cb);
+  runWorkspace();
 };
 
 function ensureWorkspace(workspaceApp, cb) {
@@ -38,4 +41,38 @@ function ensureWorkspace(workspaceApp, cb) {
     console.log(`Managing workspace in ${process.env.WORKSPACE_DIR}`);
     cb();
   }
+}
+
+function runWorkspace() {
+  let proc = nodemon({
+    cwd: process.env.WORKSPACE_DIR,
+    script: 'server/server.js',
+    delay: 750,
+    stdout: false
+  });
+
+  let output = '';
+
+  proc.on('stderr', buf => {
+    output += buf.toString('utf-8');
+  });
+
+  proc.on('stdout', buf => {
+    output += buf.toString('utf-8');
+  });
+
+  proc.on('start', () => {
+    debug('workspace started');
+  });
+
+  proc.on('crash', () => {
+    debug('workspace crashed! output follows');
+    debug(output);
+    output = '';
+  });
+
+  proc.on('exit', () => {
+    debug('workspace exited');
+    output = '';
+  });
 }

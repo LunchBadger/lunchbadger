@@ -17,6 +17,7 @@
     "loopback-datasource-juggler": "^2.39.0",
     "loopback-workspace": "^3.35.0",
     "morgan": "^1.7.0",
+    "nodemon": "^1.11.0",
     "rimraf": "^2.5.2",
     "serve-favicon": "^2.0.1",
     "shelljs": "^0.7.0"
