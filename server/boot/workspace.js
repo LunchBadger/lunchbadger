@@ -22,8 +22,13 @@ module.exports = function(app, cb) {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  ensureWorkspace(workspace, cb);
-  runWorkspace();
+  app.models.WorkspaceStatus.create({
+    running: false,
+    output: ''
+  }).then(status => {
+    ensureWorkspace(workspace, cb);
+    runWorkspace(status);
+  });
 };
 
 function ensureWorkspace(workspaceApp, cb) {
@@ -43,7 +48,7 @@ function ensureWorkspace(workspaceApp, cb) {
   }
 }
 
-function runWorkspace() {
+function runWorkspace(status) {
   let proc = nodemon({
     cwd: process.env.WORKSPACE_DIR,
     script: 'server/server.js',
@@ -52,6 +57,7 @@ function runWorkspace() {
   });
 
   let output = '';
+  let debounce = null;
 
   proc.on('stderr', buf => {
     output += buf.toString('utf-8');
@@ -61,18 +67,33 @@ function runWorkspace() {
     output += buf.toString('utf-8');
   });
 
+  function changeStatus(running, output) {
+    if (debounce) {
+      clearTimeout(debounce);
+    }
+
+    debounce = setTimeout(() => {
+      status.running = running;
+      status.output = output;
+      status.save();
+    }, 1500);
+  }
+
   proc.on('start', () => {
     debug('workspace started');
+    changeStatus(true, '');
   });
 
   proc.on('crash', () => {
     debug('workspace crashed! output follows');
     debug(output);
+    changeStatus(false, output);
     output = '';
   });
 
   proc.on('exit', () => {
     debug('workspace exited');
+    changeStatus(false, output);
     output = '';
   });
 }

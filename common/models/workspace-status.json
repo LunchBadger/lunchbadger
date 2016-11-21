@@ -1,0 +1,23 @@
+{
+  "name": "WorkspaceStatus",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "running": {
+      "type": "boolean"
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {},
+  "http": {
+    "path": "/WorkspaceStatus"
+  }
+}

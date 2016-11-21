@@ -3,5 +3,9 @@
     "name": "db",
     "connector": "memory",
     "file": "temporaryData.json"
+  },
+  "memory": {
+    "name": "memory",
+    "connector": "memory"
   }
 }

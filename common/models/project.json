@@ -46,8 +46,7 @@
         "forceId": false
       }
     },
-    "gateway":
-    {
+    "gateway": {
       "type": "embedsMany",
       "model": "Gateway",
       "property": "gateways",
