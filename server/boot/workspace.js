@@ -32,7 +32,7 @@ module.exports = function(app, cb) {
 };
 
 function ensureWorkspace(workspaceApp, cb) {
-  let Workspace = workspaceApp.models.Workspace;
+  let {Workspace, FacetSetting} = workspaceApp.models;
 
   let userName = process.env.LB_USER || 'workspace';
   let userEnv = process.env.LB_ENV || 'dev';
@@ -41,7 +41,14 @@ function ensureWorkspace(workspaceApp, cb) {
   let pkgFile = path.join(process.env.WORKSPACE_DIR, 'package.json');
   if (!fs.existsSync(pkgFile)) {
     console.log(`Creating workspace in ${process.env.WORKSPACE_DIR}`);
-    Workspace.createFromTemplate('empty-server', wsName, cb);
+    Workspace.createFromTemplate('empty-server', wsName, () => {
+      FacetSetting.upsert({
+        "id": "server.port",
+        "facetName": "server",
+        "name": "port",
+        "value": 5000
+      }, cb);
+    });
   } else {
     console.log(`Managing workspace in ${process.env.WORKSPACE_DIR}`);
     cb();
