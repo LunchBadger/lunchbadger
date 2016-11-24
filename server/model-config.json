@@ -96,6 +96,7 @@
       "remoting": {
         "sharedMethods": {
           "*": false,
+          "ping": true,
           "createChangeStream": true,
           "findById": true
         }
