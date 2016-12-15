@@ -484,6 +484,18 @@
       "from": "es6-promise@>=3.0.2 <4.0.0",
       "resolved": "https://registry.npmjs.org/es6-promise/-/es6-promise-3.3.1.tgz"
     },
+    "es6-promisify": {
+      "version": "5.0.0",
+      "from": "es6-promisify@latest",
+      "resolved": "https://registry.npmjs.org/es6-promisify/-/es6-promisify-5.0.0.tgz",
+      "dependencies": {
+        "es6-promise": {
+          "version": "4.0.5",
+          "from": "es6-promise@>=4.0.3 <5.0.0",
+          "resolved": "https://registry.npmjs.org/es6-promise/-/es6-promise-4.0.5.tgz"
+        }
+      }
+    },
     "escape-html": {
       "version": "1.0.3",
       "from": "escape-html@>=1.0.3 <1.1.0",
@@ -1498,7 +1510,7 @@
     },
     "ncp": {
       "version": "2.0.0",
-      "from": "ncp@>=2.0.0 <3.0.0",
+      "from": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz",
       "resolved": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz"
     },
     "negotiator": {
