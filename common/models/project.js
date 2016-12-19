@@ -64,7 +64,9 @@ module.exports = function(Project) {
   };
 
   Project.observe('after save', function(ctx, next) {
-    exec('git status', {cwd: process.env.WORKSPACE_DIR})
+    execWs('git status')
+
+      // Commit, if necessary
       .then((stdout) => {
         if (!stdout.includes('nothing to commit')) {
           debug('changes detected, committing');
@@ -72,24 +74,55 @@ module.exports = function(Project) {
         } else {
           debug('nothing to commit');
         }
-      }).then(() => {
-        next(null);
-      }).catch(err => {
-        console.log(err.stack);
+      })
+
+      // Push to Git
+      .then(() => {
+        return push();
+      })
+
+      // Return result
+      .then(success => {
+        if (!success) {
+          err = new Error('Conflict in Git repository');
+          err.status = 409;
+          next(err);
+        } else {
+          next(null);
+        }
+      })
+      .catch(err => {
         next(new Error('Error saving project'));
       });
   });
 };
 
+function execWs(cmd) {
+  return exec(cmd, {cwd: process.env.WORKSPACE_DIR});
+}
+
 function commit() {
-  return exec('git add -A', {cwd: process.env.WORKSPACE_DIR})
+  return execWs('git add -A')
     .then(() => {
-      return exec('git commit -m "Changes via LunchBadger"',
-                  {cwd: process.env.WORKSPACE_DIR});
-    })
+      return execWs('git commit -m "Changes via LunchBadger"');
+    });
+}
+
+function push() {
+  return execWs('git push')
+    .then(() => true)
+    .catch((err) => {
+      if (err.message.includes('[rejected]')) {
+        return reset().then(() => false);
+      } else {
+        throw err;
+      }
+    });
+}
+
+function reset() {
+  return execWs('git reset --hard origin/master')
     .then(() => {
-      return exec('git push', {cwd: process.env.WORKSPACE_DIR})
-        .catch((err) => {
-        });
-    })
+      return execWs('git pull');
+    });
 }
