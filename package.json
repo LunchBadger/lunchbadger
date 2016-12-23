@@ -1,6 +1,6 @@
 {
   "name": "lunchbadger-workspace",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "server/server",
   "scripts": {
     "start": "node .",
