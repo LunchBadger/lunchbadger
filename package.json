@@ -1,9 +1,10 @@
 {
   "name": "lunchbadger-workspace",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "server/server",
   "scripts": {
     "start": "node .",
+    "postinstall": "npm uninstall loopback-component-explorer && npm install LunchBadger/loopback-component-explorer",
     "pretest": "jshint .",
     "posttest": "nsp check"
   },

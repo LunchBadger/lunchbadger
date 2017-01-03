@@ -101,7 +101,10 @@ function runWorkspace(status) {
     cwd: process.env.WORKSPACE_DIR,
     script: 'server/server.js',
     delay: 750,
-    stdout: false
+    stdout: false,
+    env: {
+      LOOPBACK_URL_PREFIX: process.env.WORKSPACE_URL_PREFIX
+    }
   });
 
   let output = '';
