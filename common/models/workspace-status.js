@@ -9,4 +9,35 @@ module.exports = function(WorkspaceStatus) {
     description: "For checking whether the server is up. Responds with 204.",
     http: { verb: 'get', path: '/ping' }
   });
+
+  // When starting a change stream, send the current view of each of the models
+  // down the pipe first thing after connection.
+  WorkspaceStatus.createChangeStream = function(options, cb) {
+    if (typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+
+    const PersistedModel = WorkspaceStatus.app.loopback.PersistedModel;
+    PersistedModel.createChangeStream.call(this, options, (err, changes) => {
+      if (err) {
+        return cb(err);
+      }
+
+      WorkspaceStatus.find((err, models) => {
+        if (err) {
+          return cb(err);
+        }
+        models.forEach(model => {
+          changes.write({
+            target: model.id,
+            data: model.toJSON(),
+            type: 'update'
+          });
+        });
+      });
+
+      cb(null, changes);
+    });
+  };
 };
