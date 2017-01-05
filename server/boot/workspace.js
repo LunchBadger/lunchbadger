@@ -1,12 +1,15 @@
 'use strict';
 
 const promisify = require('es6-promisify');
+const EventSource = require('eventsource');
 const exec = promisify(require('child_process').exec);
+const {execWs, reset} = require('../../common/lib/util');
 const fs = require('fs');
 const ncp = promisify(require('ncp'));
 const path = require('path');
 const cors = require('cors');
 const nodemon = require('nodemon');
+const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
 process.env.WORKSPACE_DIR = path.normalize(path.join(__dirname, '../../workspace'));
@@ -22,27 +25,42 @@ workspace.middleware('initial', cors({
 }));
 
 module.exports = function(app, cb) {
+  let userName = process.env.LB_USER || 'workspace';
+  let userEnv = process.env.LB_ENV || 'dev';
+  let gitUrl = process.env.GIT_URL || 'http://localhost:3002/git/demo.git';
+  let wsName = `${userName}-${userEnv}`;
+  let branch = `env/${userEnv}`;
+
   app.workspace = workspace;
   workspace.listen(app.get('workspacePort'), app.get('host'), function() {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  app.models.WorkspaceStatus.create({
-    running: false,
-    output: ''
-  }).then(status => {
-    ensureWorkspace(workspace, cb);
-    runWorkspace(status);
-  });
+  ensureWorkspace(workspace, wsName, branch, gitUrl)
+    .then(rev => {
+      return app.models.WorkspaceStatus.create({
+        running: false,
+        output: '',
+        instance: uuidv1(),
+        revision: rev
+      });
+    })
+    .then(status => {
+      app.models.Project.workspaceStatus = status;
+
+      runWorkspace(status);
+      watchConfigStore(status, branch);
+    })
+    .then(() => {
+      cb();
+    })
+    .catch(err => {
+      cb(err);
+    });
 };
 
-function ensureWorkspace(workspaceApp, cb) {
+function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
   let {Workspace, FacetSetting} = workspaceApp.models;
-
-  let userName = process.env.LB_USER || 'workspace';
-  let userEnv = process.env.LB_ENV || 'dev';
-  let gitUrl = process.env.GIT_URL || 'http://localhost:3002/git/demo.git';
-  let wsName = `${userName}-${userEnv}`;
 
   let pkgFile = path.join(process.env.WORKSPACE_DIR, 'package.json');
   let projectFile = path.join(process.env.WORKSPACE_DIR, 'lunchbadger.json');
@@ -55,6 +73,23 @@ function ensureWorkspace(workspaceApp, cb) {
       .then(() => {
         return exec(`git clone ${gitUrl} ${process.env.WORKSPACE_DIR}`);
       })
+
+      // Make sure we have the correct branch
+      .then(() => {
+        return execWs(`git checkout ${branch}`).catch(err => {
+          if (err.message.includes('did not match any file(s)')) {
+            return execWs('git checkout master')
+                   // Ignore errors from this as there may not be a master
+                   // branch
+                   .catch(() => true)
+                   .then(() => {
+                      return execWs(`git checkout -b ${branch}`);
+                   });
+          } else {
+            throw err;
+          }
+        });
+      });
   }
 
   if (!fs.existsSync(pkgFile)) {
@@ -74,10 +109,9 @@ function ensureWorkspace(workspaceApp, cb) {
               "value": 5000
             });
           }).then(() => {
-            return exec('git add -A', {cwd: process.env.WORKSPACE_DIR});
+            return execWs('git add -A');
           }).then(() => {
-            return exec('git commit -m "New LoopBack project"',
-                        {cwd: process.env.WORKSPACE_DIR});
+            return execWs('git commit -m "New LoopBack project"');
           });
       });
   }
@@ -88,12 +122,14 @@ function ensureWorkspace(workspaceApp, cb) {
     });
   }
 
-  promise.then(() => {
+  promise = promise.then(() => {
     console.log(`Managing workspace in ${process.env.WORKSPACE_DIR}`);
-    cb();
-  }).catch(err => {
-    cb(err);
-  });
+    return execWs('git show --format="format:%H" -s');
+  }).then((rev) => {
+    return rev.trim();
+  })
+
+  return promise;
 }
 
 function runWorkspace(status) {
@@ -146,5 +182,40 @@ function runWorkspace(status) {
     debug('workspace exited');
     changeStatus(false, output);
     output = '';
+  });
+}
+
+function watchConfigStore(status, branch) {
+  const watchUrl = (process.env.WATCH_URL ||
+    `http://localhost:3002/api/producers/demo/change-stream`);
+  let es = new EventSource(watchUrl);
+  es.addEventListener('data', function(message) {
+    let statusUpdate = JSON.parse(message.data);
+
+    if (statusUpdate.type !== 'push') {
+      return;
+    }
+
+    let doReset = false;
+    for (const change of statusUpdate.changes) {
+      if (change.type === 'head' && change.ref === branch) {
+        if (change.after !== status.revision) {
+          doReset = true;
+        }
+        break;
+      }
+    }
+
+    if (doReset) {
+      debug('git push detected, resetting workspace');
+      status.instance = uuidv1();
+      status.save()
+        .then(() => {
+          return reset(branch);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
   });
 }

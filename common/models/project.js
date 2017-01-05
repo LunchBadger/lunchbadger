@@ -1,7 +1,6 @@
 const async = require('async');
 const debug = require('debug')('lunchbadger-workspace:project');
-const promisify = require('es6-promisify');
-const exec = promisify(require('child_process').exec);
+const {execWs, commit, push} = require('../lib/util');
 
 module.exports = function(Project) {
 
@@ -64,6 +63,9 @@ module.exports = function(Project) {
   };
 
   Project.observe('after save', function(ctx, next) {
+    let userEnv = process.env.LB_ENV || 'dev';
+    let branch = `env/${userEnv}`;
+
     execWs('git status')
 
       // Commit, if necessary
@@ -76,9 +78,17 @@ module.exports = function(Project) {
         }
       })
 
+      // Remember the new revision
+      .then(rev => {
+        if (rev) {
+          Project.workspaceStatus.revision = rev;
+          return Project.workspaceStatus.save();
+        }
+      })
+
       // Push to Git
       .then(() => {
-        return push();
+        return push(branch);
       })
 
       // Return result
@@ -97,33 +107,3 @@ module.exports = function(Project) {
       });
   });
 };
-
-function execWs(cmd) {
-  return exec(cmd, {cwd: process.env.WORKSPACE_DIR});
-}
-
-function commit() {
-  return execWs('git add -A')
-    .then(() => {
-      return execWs('git commit -m "Changes via LunchBadger"');
-    });
-}
-
-function push() {
-  return execWs('git push')
-    .then(() => true)
-    .catch((err) => {
-      if (err.message.includes('[rejected]')) {
-        return reset().then(() => false);
-      } else {
-        throw err;
-      }
-    });
-}
-
-function reset() {
-  return execWs('git reset --hard origin/master')
-    .then(() => {
-      return execWs('git pull');
-    });
-}

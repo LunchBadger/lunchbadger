@@ -11,6 +11,9 @@
     },
     "output": {
       "type": "string"
+    },
+    "instance": {
+      "type": "string"
     }
   },
   "validations": [],
