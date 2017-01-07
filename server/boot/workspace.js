@@ -4,6 +4,7 @@ const promisify = require('es6-promisify');
 const EventSource = require('eventsource');
 const exec = promisify(require('child_process').exec);
 const {execWs, reset} = require('../../common/lib/util');
+const config = require('../../common/lib/config');
 const fs = require('fs');
 const ncp = promisify(require('ncp'));
 const path = require('path');
@@ -12,7 +13,7 @@ const nodemon = require('nodemon');
 const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
-process.env.WORKSPACE_DIR = path.normalize(path.join(__dirname, '../../workspace'));
+process.env.WORKSPACE_DIR = config.workspaceDir;
 const workspace = require('loopback-workspace');
 
 const PROJECT_TEMPLATE = path.normalize(path.join(__dirname, '../blank-project.json'));
@@ -25,18 +26,14 @@ workspace.middleware('initial', cors({
 }));
 
 module.exports = function(app, cb) {
-  let userName = process.env.LB_USER || 'workspace';
-  let userEnv = process.env.LB_ENV || 'dev';
-  let gitUrl = process.env.GIT_URL || 'http://localhost:3002/git/demo.git';
-  let wsName = `${userName}-${userEnv}`;
-  let branch = `env/${userEnv}`;
+  let wsName = `${config.userName}-${config.userEnv}`;
 
   app.workspace = workspace;
   workspace.listen(app.get('workspacePort'), app.get('host'), function() {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  ensureWorkspace(workspace, wsName, branch, gitUrl)
+  ensureWorkspace(workspace, wsName, config.branch, config.gitUrl)
     .then(rev => {
       return app.models.WorkspaceStatus.create({
         running: false,
@@ -49,7 +46,7 @@ module.exports = function(app, cb) {
       app.models.Project.workspaceStatus = status;
 
       runWorkspace(status);
-      watchConfigStore(status, branch);
+      watchConfigStore(status, config.branch);
     })
     .then(() => {
       cb();
@@ -62,16 +59,16 @@ module.exports = function(app, cb) {
 function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
   let {Workspace, FacetSetting} = workspaceApp.models;
 
-  let pkgFile = path.join(process.env.WORKSPACE_DIR, 'package.json');
-  let projectFile = path.join(process.env.WORKSPACE_DIR, 'lunchbadger.json');
+  let pkgFile = path.join(config.workspaceDir, 'package.json');
+  let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
 
   let promise = Promise.resolve(null);
-  if (!fs.existsSync(process.env.WORKSPACE_DIR)) {
-    console.log(`Cloning workspace repo to ${process.env.WORKSPACE_DIR}`);
+  if (!fs.existsSync(config.workspaceDir)) {
+    console.log(`Cloning workspace repo to ${config.workspaceDir}`);
 
     promise = promise
       .then(() => {
-        return exec(`git clone ${gitUrl} ${process.env.WORKSPACE_DIR}`);
+        return exec(`git clone ${gitUrl} ${config.workspaceDir}`);
       })
 
       // Make sure we have the correct branch
@@ -123,7 +120,7 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
   }
 
   promise = promise.then(() => {
-    console.log(`Managing workspace in ${process.env.WORKSPACE_DIR}`);
+    console.log(`Managing workspace in ${config.workspaceDir}`);
     return execWs('git show --format="format:%H" -s');
   }).then((rev) => {
     return rev.trim();
@@ -134,7 +131,7 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
 
 function runWorkspace(status) {
   let proc = nodemon({
-    cwd: process.env.WORKSPACE_DIR,
+    cwd: config.workspaceDir,
     script: 'server/server.js',
     delay: 750,
     stdout: false,

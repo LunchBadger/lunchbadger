@@ -1,6 +1,7 @@
 const async = require('async');
 const debug = require('debug')('lunchbadger-workspace:project');
 const {execWs, commit, push} = require('../lib/util');
+const config = require('../lib/config');
 
 module.exports = function(Project) {
 
@@ -63,9 +64,6 @@ module.exports = function(Project) {
   };
 
   Project.observe('after save', function(ctx, next) {
-    let userEnv = process.env.LB_ENV || 'dev';
-    let branch = `env/${userEnv}`;
-
     execWs('git status')
 
       // Commit, if necessary
@@ -88,7 +86,7 @@ module.exports = function(Project) {
 
       // Push to Git
       .then(() => {
-        return push(branch);
+        return push(config.branch);
       })
 
       // Return result
