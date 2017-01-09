@@ -185,6 +185,7 @@ function runWorkspace(status) {
 function watchConfigStore(status, branch) {
   const watchUrl = (process.env.WATCH_URL ||
     `http://localhost:3002/api/producers/demo/change-stream`);
+  let connected = false;
   let es = new EventSource(watchUrl);
   es.addEventListener('data', function(message) {
     let statusUpdate = JSON.parse(message.data);
@@ -213,6 +214,20 @@ function watchConfigStore(status, branch) {
         .catch(err => {
           console.error(err);
         });
+    }
+  });
+
+  es.addEventListener('open', () => {
+    if (!connected) {
+      console.log('connected to configstore');
+      connected = true;
+    }
+  });
+
+  es.addEventListener('error', (err) => {
+    if (connected !== false) {
+      console.log('disconnected from configstore');
+      connected = false;
     }
   });
 }

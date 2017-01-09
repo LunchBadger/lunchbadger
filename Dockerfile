@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app/
 RUN npm install
-COPY . /usr/src/app
 
 RUN git config --global user.email "support@lunchbadger.com" && \
     git config --global user.name "LunchBadger"
@@ -15,6 +14,7 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-mysql \
                 LunchBadger/loopback-connector-salesforce
 
+COPY . /usr/src/app
 ENV NODE_ENV production
 
 CMD [ "npm", "start" ]
