@@ -130,15 +130,19 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
 }
 
 function runWorkspace(status) {
-  let proc = nodemon({
+  let options = {
     cwd: config.workspaceDir,
     script: 'server/server.js',
     delay: 750,
-    stdout: false,
-    env: {
+    stdout: false
+  }
+  if (process.env.WORKSPACE_URL_PREFIX) {
+    options.env = {
       LOOPBACK_URL_PREFIX: process.env.WORKSPACE_URL_PREFIX
-    }
-  });
+    };
+  }
+
+  let proc = nodemon(options);
 
   let output = '';
   let debounce = null;
