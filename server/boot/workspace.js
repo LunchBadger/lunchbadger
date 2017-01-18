@@ -89,35 +89,34 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
       });
   }
 
-  if (!fs.existsSync(pkgFile)) {
-    console.log(`Creating new LoopBack project`);
+  promise = promise.then(() => {
+    if (!fs.existsSync(pkgFile)) {
+      console.log(`Creating new LoopBack project`);
 
-    promise = promise
-      .then(() => {
-        const createFromTemplate = promisify(
-          Workspace.createFromTemplate.bind(Workspace));
+      const createFromTemplate = promisify(
+        Workspace.createFromTemplate.bind(Workspace));
 
-        return createFromTemplate('empty-server', wsName)
-          .then(() => {
-            return promisify(FacetSetting.upsert.bind(FacetSetting))({
-              "id": "server.port",
-              "facetName": "server",
-              "name": "port",
-              "value": 5000
-            });
-          }).then(() => {
-            return execWs('git add -A');
-          }).then(() => {
-            return execWs('git commit -m "New LoopBack project"');
+      return createFromTemplate('empty-server', wsName)
+        .then(() => {
+          return promisify(FacetSetting.upsert.bind(FacetSetting))({
+            "id": "server.port",
+            "facetName": "server",
+            "name": "port",
+            "value": 5000
           });
-      });
-  }
+        }).then(() => {
+          return execWs('git add -A');
+        }).then(() => {
+          return execWs('git commit -m "New LoopBack project"');
+        });
+    }
+  });
 
-  if (!fs.existsSync(projectFile)) {
-    promise = promise.then(() => {
+  promise = promise.then(() => {
+    if (!fs.existsSync(projectFile)) {
       return ncp(PROJECT_TEMPLATE, projectFile);
-    });
-  }
+    }
+  });
 
   promise = promise.then(() => {
     console.log(`Managing workspace in ${config.workspaceDir}`);
