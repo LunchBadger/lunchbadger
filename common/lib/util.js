@@ -31,9 +31,9 @@ function push(branch) {
 }
 
 function reset(branch) {
-  return execWs(`git reset --hard origin/${branch}`)
+  return execWs('git fetch')
     .then(() => {
-      return execWs(`git pull origin ${branch}`);
+      return execWs(`git reset --hard origin/${branch}`);
     });
 }
 
