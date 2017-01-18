@@ -62,6 +62,8 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
   let pkgFile = path.join(config.workspaceDir, 'package.json');
   let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
 
+  let needsCommit = false;
+
   let promise = Promise.resolve(null);
   if (!fs.existsSync(config.workspaceDir)) {
     console.log(`Cloning workspace repo to ${config.workspaceDir}`);
@@ -98,25 +100,32 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
 
       return createFromTemplate('empty-server', wsName)
         .then(() => {
+          needsCommit = true;
           return promisify(FacetSetting.upsert.bind(FacetSetting))({
             "id": "server.port",
             "facetName": "server",
             "name": "port",
             "value": 5000
           });
-        }).then(() => {
-          return execWs('git add -A');
-        }).then(() => {
-          return execWs('git commit -m "New LoopBack project"');
         });
     }
   });
 
   promise = promise.then(() => {
     if (!fs.existsSync(projectFile)) {
+      needsCommit = true;
       return ncp(PROJECT_TEMPLATE, projectFile);
     }
   });
+
+  promise = promise.then(() => {
+    if (needsCommit) {
+      return execWs('git add -A')
+        .then(() => {
+          return execWs('git commit -m "New LunchBadger project"');
+        });
+    }
+  })
 
   promise = promise.then(() => {
     console.log(`Managing workspace in ${config.workspaceDir}`);
