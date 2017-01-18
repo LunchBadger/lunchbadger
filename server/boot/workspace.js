@@ -33,7 +33,7 @@ module.exports = function(app, cb) {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  ensureWorkspace(workspace, wsName, config.branch, config.gitUrl)
+  ensureWorkspace(app, wsName, config.branch, config.gitUrl)
     .then(rev => {
       return app.models.WorkspaceStatus.create({
         running: false,
@@ -56,8 +56,8 @@ module.exports = function(app, cb) {
     });
 };
 
-function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
-  let {Workspace, FacetSetting} = workspaceApp.models;
+function ensureWorkspace(app, wsName, branch, gitUrl) {
+  let {Workspace, FacetSetting} = app.workspace.models;
 
   let pkgFile = path.join(config.workspaceDir, 'package.json');
   let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
@@ -125,9 +125,13 @@ function ensureWorkspace(workspaceApp, wsName, branch, gitUrl) {
           return execWs('git commit -m "New LunchBadger project"');
         });
     }
-  })
+  });
 
   promise = promise.then(() => {
+    // Make sure we reload project data, since it may have changed
+    const connector = app.dataSources.db.connector;
+    return promisify(connector.loadFromFile.bind(connector))();
+  }).then(() => {
     console.log(`Managing workspace in ${config.workspaceDir}`);
     return execWs('git show --format="format:%H" -s');
   }).then((rev) => {
