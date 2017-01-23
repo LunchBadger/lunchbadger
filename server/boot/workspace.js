@@ -98,16 +98,8 @@ function ensureWorkspace(app, wsName, branch, gitUrl) {
       const createFromTemplate = promisify(
         Workspace.createFromTemplate.bind(Workspace));
 
-      return createFromTemplate('empty-server', wsName)
-        .then(() => {
-          needsCommit = true;
-          return promisify(FacetSetting.upsert.bind(FacetSetting))({
-            "id": "server.port",
-            "facetName": "server",
-            "name": "port",
-            "value": 5000
-          });
-        });
+      needsCommit = true;
+      return createFromTemplate('empty-server', wsName);
     }
   });
 
