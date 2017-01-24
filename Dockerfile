@@ -12,7 +12,10 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-mongodb \
                 loopback-connector-redis \
                 loopback-connector-mysql \
-                LunchBadger/loopback-connector-salesforce
+                LunchBadger/loopback-connector-salesforce \
+                AdChain/loopback-connector-web3 \
+                js-sha256 \
+                socket.io
 
 COPY . /usr/src/app
 ENV NODE_ENV production
