@@ -97,6 +97,7 @@
         "sharedMethods": {
           "*": false,
           "ping": true,
+          "restart": true,
           "createChangeStream": true,
           "findById": true
         }

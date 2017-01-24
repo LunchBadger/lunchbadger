@@ -10,6 +10,16 @@ module.exports = function(WorkspaceStatus) {
     http: { verb: 'get', path: '/ping' }
   });
 
+  WorkspaceStatus.restart = function(cb) {
+    WorkspaceStatus.proc.restart();
+    cb();
+  };
+
+  WorkspaceStatus.remoteMethod('restart', {
+    description: 'Restart the workspace process',
+    http: { verb: 'post', path: '/restart' }
+  });
+
   // When starting a change stream, send the current view of each of the models
   // down the pipe first thing after connection.
   WorkspaceStatus.createChangeStream = function(options, cb) {

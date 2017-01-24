@@ -188,6 +188,8 @@ function runWorkspace(status) {
     changeStatus(false, output);
     output = '';
   });
+
+  status.constructor.proc = proc;
 }
 
 function watchConfigStore(status, branch) {
