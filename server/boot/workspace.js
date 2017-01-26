@@ -17,6 +17,7 @@ process.env.WORKSPACE_DIR = config.workspaceDir;
 const workspace = require('loopback-workspace');
 
 const PROJECT_TEMPLATE = path.normalize(path.join(__dirname, '../blank-project.json'));
+const DETACHED = '0000000000000000000000000000000000000000';
 
 workspace.middleware('initial', cors({
   origin: true,
@@ -197,20 +198,32 @@ function watchConfigStore(status, branch) {
   let es = new EventSource(watchUrl);
   es.addEventListener('data', function(message) {
     let statusUpdate = JSON.parse(message.data);
-
-    if (statusUpdate.type !== 'push') {
-      return;
-    }
-
-    debug('git push detected');
-
     let doReset = false;
-    for (const change of statusUpdate.changes) {
-      if (change.type === 'head' && change.ref === branch) {
-        if (change.after !== status.revision) {
-          doReset = true;
+
+    if (statusUpdate.type === 'push') {
+      debug('git push detected');
+
+      for (const change of statusUpdate.changes) {
+        if (change.type === 'head' && change.ref === branch) {
+          if (change.after !== status.revision && change.after !== DETACHED) {
+            debug(`${branch} changed from ${status.revision} to ${change.after}`);
+            doReset = true;
+          }
+          break;
         }
-        break;
+      }
+    } else if (statusUpdate.type === 'initial') {
+      debug('received initial branch status');
+
+      for (const ref of Object.keys(statusUpdate.branches)) {
+        if (ref === branch) {
+          const newRev = statusUpdate.branches[ref];
+          if (newRev !== status.revision && newRev !== DETACHED) {
+            debug(`${branch} changed from ${status.revision} to ${newRev}`);
+            doReset = true;
+          }
+          break;
+        }
       }
     }
 
