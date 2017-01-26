@@ -86,12 +86,14 @@ module.exports = function(Project) {
 
       // Push to Git
       .then(() => {
+        debug('pushing');
         return push(config.branch);
       })
 
       // Return result
       .then(success => {
         if (!success) {
+          debug('conflict detected');
           err = new Error('Conflict in Git repository');
           err.status = 409;
           next(err);

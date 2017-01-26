@@ -60,7 +60,6 @@ function ensureWorkspace(app, wsName, branch, gitUrl) {
   let {Workspace, FacetSetting} = app.workspace.models;
 
   let pkgFile = path.join(config.workspaceDir, 'package.json');
-  let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
 
   let needsCommit = false;
 
@@ -104,13 +103,12 @@ function ensureWorkspace(app, wsName, branch, gitUrl) {
   });
 
   promise = promise.then(() => {
-    if (!fs.existsSync(projectFile)) {
-      needsCommit = true;
-      return ncp(PROJECT_TEMPLATE, projectFile);
-    }
+    return ensureProjectFileExists().then((createdProject) => {
+      needsCommit = needsCommit || createdProject;
+    });
   });
 
-  promise = promise.then(() => {
+  promise = promise.then((createdProjectFile) => {
     if (needsCommit) {
       return execWs('git add -A')
         .then(() => {
@@ -204,6 +202,8 @@ function watchConfigStore(status, branch) {
       return;
     }
 
+    debug('git push detected');
+
     let doReset = false;
     for (const change of statusUpdate.changes) {
       if (change.type === 'head' && change.ref === branch) {
@@ -215,11 +215,14 @@ function watchConfigStore(status, branch) {
     }
 
     if (doReset) {
-      debug('git push detected, resetting workspace');
+      debug('resetting workspace');
       status.instance = uuidv1();
       status.save()
         .then(() => {
           return reset(branch);
+        })
+        .then(() => {
+          return ensureProjectFileExists();
         })
         .catch(err => {
           console.error(err);
@@ -229,15 +232,26 @@ function watchConfigStore(status, branch) {
 
   es.addEventListener('open', () => {
     if (!connected) {
-      console.log('connected to configstore');
+      debug('connected to configstore');
       connected = true;
     }
   });
 
   es.addEventListener('error', (err) => {
     if (connected !== false) {
-      console.log('disconnected from configstore');
+      debug('disconnected from configstore');
       connected = false;
     }
   });
+}
+
+function ensureProjectFileExists() {
+  let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
+
+  if (!fs.existsSync(projectFile)) {
+    debug(`creating a new project file (${projectFile})`);
+    return ncp(PROJECT_TEMPLATE, projectFile).then(() => true);
+  }
+
+  return Promise.resolve(false);
 }
