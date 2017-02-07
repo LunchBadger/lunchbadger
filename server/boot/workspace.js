@@ -9,7 +9,7 @@ const fs = require('fs');
 const ncp = promisify(require('ncp'));
 const path = require('path');
 const cors = require('cors');
-const nodemon = require('nodemon');
+const WsManager = require('../../common/lib/wsmanager');
 const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
@@ -132,9 +132,10 @@ function ensureWorkspace(app, wsName, branch, gitUrl) {
   return promise;
 }
 
-function runWorkspace(status) {
+function runWorkspace(wsStatus) {
   let options = {
     cwd: config.workspaceDir,
+    watch: [config.workspaceDir],
     script: 'server/server.js',
     delay: 750,
     stdout: false
@@ -145,7 +146,7 @@ function runWorkspace(status) {
     };
   }
 
-  let proc = nodemon(options);
+  let proc = WsManager(options);
 
   let output = '';
   let debounce = null;
@@ -164,9 +165,9 @@ function runWorkspace(status) {
     }
 
     debounce = setTimeout(() => {
-      status.running = running;
-      status.output = output;
-      status.save();
+      wsStatus.status = running ? 'running' : 'crashed';
+      wsStatus.output = output;
+      wsStatus.save();
     }, 1500);
   }
 
@@ -188,7 +189,23 @@ function runWorkspace(status) {
     output = '';
   });
 
-  status.constructor.proc = proc;
+  proc.on('install_started', () => {
+    debug('dependency install started');
+    wsStatus.status = 'installing';
+    wsStatus.output = '';
+    wsStatus.save();
+  });
+
+  proc.on('install_success', () => {
+    debug('dependency install success');
+  })
+
+  proc.on('install_error', output => {
+    debug(`dependency installation error: ${output}`);
+    changeStatus(false, output);
+  });
+
+  wsStatus.constructor.proc = proc;
 }
 
 function watchConfigStore(status, branch) {

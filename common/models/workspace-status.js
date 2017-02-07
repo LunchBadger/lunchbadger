@@ -20,6 +20,16 @@ module.exports = function(WorkspaceStatus) {
     http: { verb: 'post', path: '/restart' }
   });
 
+  WorkspaceStatus.reinstallDeps = function(cb) {
+    WorkspaceStatus.proc.reinstallDeps();
+    cb();
+  };
+
+  WorkspaceStatus.remoteMethod('reinstallDeps', {
+    description: 'Reinstall the project\'s dependencies',
+    http: { verb: 'post', path: '/reinstall' }
+  });
+
   // When starting a change stream, send the current view of each of the models
   // down the pipe first thing after connection.
   WorkspaceStatus.createChangeStream = function(options, cb) {

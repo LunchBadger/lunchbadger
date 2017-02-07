@@ -6,8 +6,8 @@
     "validateUpsert": true
   },
   "properties": {
-    "running": {
-      "type": "boolean"
+    "status": {
+      "type": "string"
     },
     "output": {
       "type": "string"
