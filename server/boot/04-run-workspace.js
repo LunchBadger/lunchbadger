@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('../../common/lib/config');
+const path = require('path');
 const WsManager = require('../../common/lib/wsmanager');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
@@ -10,6 +11,7 @@ module.exports = function(app, cb) {
   let options = {
     cwd: config.workspaceDir,
     watch: [config.workspaceDir],
+    ignore: [path.join(config.workspaceDir, 'package.json')],
     script: 'server/server.js',
     delay: 750,
     stdout: false
@@ -63,10 +65,11 @@ module.exports = function(app, cb) {
     output = '';
   });
 
-  proc.on('install_started', () => {
-    debug('dependency install started');
+  proc.on('install_started', (args) => {
+    const yarnArgs = args.join(' ');
+    debug(`dependency install started (${yarnArgs})`);
     wsStatus.status = 'installing';
-    wsStatus.output = '';
+    wsStatus.output = 'Now running "yarn ' + yarnArgs + '"';
     wsStatus.save();
   });
 

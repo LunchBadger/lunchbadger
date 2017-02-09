@@ -58,6 +58,9 @@ module.exports = function(app, cb) {
         .then(() => {
           return ensureProjectFileExists();
         })
+        .then(() => {
+          app.models.WorkspaceStatus.proc.reinstallDeps();
+        })
         .catch(err => {
           console.error(err);
         });
