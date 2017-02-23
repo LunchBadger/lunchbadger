@@ -9,7 +9,8 @@ const ncp = promisify(require('ncp'));
 const path = require('path');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
-const PROJECT_TEMPLATE = path.normalize(path.join(__dirname, '../../blank-project.json'));
+const PROJECT_TEMPLATE = path.normalize(
+  path.join(__dirname, '../../server/blank-project.json'));
 
 function ensureWorkspace(app) {
   const wsName = `${config.userName}-${config.userEnv}`;

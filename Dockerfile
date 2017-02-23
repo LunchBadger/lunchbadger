@@ -17,6 +17,7 @@ RUN npm install loopback-connector-rest \
                 js-sha256 \
                 socket.io \
                 ethereumjs-testrpc
+RUN npm install -g yarn
 
 COPY . /usr/src/app
 ENV NODE_ENV production
