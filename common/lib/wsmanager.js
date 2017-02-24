@@ -22,8 +22,8 @@ WsManager.prototype.addDep = function(pkgName) {
   return this._queueYarn(['add', pkgName]);
 };
 
-WsManager.prototype.removeDep = function(pkgName) {
-  return this._queueYarn(['remove', pkgName]);
+WsManager.prototype.removeDep = function(...pkgNames) {
+  return this._queueYarn(['remove', ...pkgNames]);
 };
 
 WsManager.prototype._queueYarn = function(args) {

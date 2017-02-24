@@ -22,6 +22,11 @@ module.exports = function(app, cb) {
   });
 
   DataSourceDefinition.observe('before save', function(ctx, next) {
+    if (ctx.instance.connector === 'memory') {
+      // memory connector is built in
+      return next();
+    }
+
     const connector = `loopback-connector-${ctx.instance.connector}`;
 
     PackageDefinition.findById('workspace-dev')
@@ -39,14 +44,24 @@ module.exports = function(app, cb) {
   DataSourceDefinition.observe('before delete', function(ctx, next) {
     DataSourceDefinition.find()
       .then(allDs => {
-        let deps = {};
-        let connector;
-
+        let deps = new Map();
+        // Count up all the connectors we depend on
         for (const ds of allDs) {
-          if (ds.id === ctx.where.id) {
-            connector = ds.connector;
+          if (ds.connector === 'memory') {
+            // memory connector is built in
+            continue;
+          } else if (ds.id === ctx.where.id ||
+                     Object.keys(ctx.where).length === 0) {
+            deps.set(ds.connector, deps.get(ds.connector) || 0);
           } else {
-            deps[ds.connector] = (deps[ds.connector] || 0) + 1;
+            deps.set(ds.connector, (deps.get(ds.connector) || 0) + 1);
+          }
+        }
+
+        const modulesToRemove = [];
+        for (const [connector, numDeps] of deps.entries()) {
+          if (numDeps === 0) {
+            modulesToRemove.push(`loopback-connector-${connector}`);
           }
         }
 
@@ -54,9 +69,8 @@ module.exports = function(app, cb) {
         // background
         next();
 
-        if (!deps[connector]) {
-          const connectorModule = `loopback-connector-${connector}`;
-          app.models.WorkspaceStatus.proc.removeDep(connectorModule);
+        if (modulesToRemove.length > 0) {
+          app.models.WorkspaceStatus.proc.removeDep(...modulesToRemove);
         }
       });
   });
