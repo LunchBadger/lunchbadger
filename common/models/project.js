@@ -28,6 +28,8 @@ module.exports = function(Project) {
 
       this.privateEndpoints = [];
       this.publicEndpoints = [];
+      this.serviceEndpoints = [];
+      this.apiEndpoints = [];
       this.apis = [];
       this.portals = [];
       this.gateways = [];
