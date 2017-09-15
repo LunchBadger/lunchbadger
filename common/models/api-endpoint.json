@@ -22,7 +22,10 @@
       "default": "*"
     },
     "paths": {
-      "type": ["string"]
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "itemOrder": {
       "type": "number",
