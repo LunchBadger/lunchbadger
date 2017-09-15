@@ -16,6 +16,10 @@
       "type": "string",
       "required": true
     },
+    "urls": {
+      "type": ["string"],
+      "required": true
+    },
     "itemOrder": {
       "type": "number",
       "required": true,

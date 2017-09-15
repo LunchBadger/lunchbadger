@@ -18,7 +18,11 @@
     },
     "host": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "*"
+    },
+    "paths": {
+      "type": ["string"]
     },
     "itemOrder": {
       "type": "number",
