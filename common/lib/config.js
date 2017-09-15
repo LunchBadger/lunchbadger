@@ -7,7 +7,7 @@ const userEnv = process.env.LB_ENV || 'dev';
 module.exports = {
   userEnv: userEnv,
   //branch: `env/${userEnv}`,
-  branch: 'master',
+  branch: 'features/service-and-api-endpoints',
   userName: process.env.LB_USER || 'workspace',
   gitUrl: process.env.GIT_URL || 'http://localhost:3002/git/demo.git',
   urlPrefix: process.env.WORKSPACE_URL_PREFIX,
