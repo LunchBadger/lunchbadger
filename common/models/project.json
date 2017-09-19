@@ -19,10 +19,10 @@
   },
   "validations": [],
   "relations": {
-    "private-endpoint": {
+    "service-endpoint": {
       "type": "embedsMany",
-      "model": "PrivateEndpoint",
-      "property": "privateEndpoints",
+      "model": "ServiceEndpoint",
+      "property": "serviceEndpoints",
       "options": {
         "validate": true,
         "forceId": false
@@ -55,10 +55,10 @@
         "forceId": false
       }
     },
-    "public-endpoint": {
+    "api-endpoint": {
       "type": "embedsMany",
-      "model": "PublicEndpoint",
-      "property": "publicEndpoints",
+      "model": "ApiEndpoint",
+      "property": "apiEndpoints",
       "options": {
         "validate": true,
         "forceId": false

@@ -1,5 +1,5 @@
 {
-  "name": "PublicEndpoint",
+  "name": "ApiEndpoint",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -16,9 +16,16 @@
       "type": "string",
       "required": true
     },
-    "path": {
+    "host": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "*"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "itemOrder": {
       "type": "number",

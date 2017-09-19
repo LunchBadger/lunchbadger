@@ -33,10 +33,10 @@
         "forceId": false
       }
     },
-    "public-endpoints": {
+    "api-endpoints": {
       "type": "embedsMany",
-      "model": "PublicEndpoint",
-      "property": "publicEndpoints",
+      "model": "ApiEndpoint",
+      "property": "apiEndpoints",
       "options": {
         "validate": true,
         "forceId": false

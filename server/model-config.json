@@ -25,11 +25,11 @@
     "dataSource": "db",
     "public": false
   },
-  "PrivateEndpoint": {
+  "ServiceEndpoint": {
     "dataSource": "db",
     "public": false
   },
-  "PublicEndpoint": {
+  "ApiEndpoint": {
     "dataSource": "db",
     "public": false
   },

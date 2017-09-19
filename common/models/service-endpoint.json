@@ -1,5 +1,5 @@
 {
-  "name": "PrivateEndpoint",
+  "name": "ServiceEndpoint",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -16,8 +16,11 @@
       "type": "string",
       "required": true
     },
-    "contextPath": {
-      "type": "string",
+    "urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "required": true
     },
     "itemOrder": {

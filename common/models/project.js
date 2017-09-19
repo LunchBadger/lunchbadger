@@ -26,8 +26,8 @@ module.exports = function(Project) {
         return;
       }
 
-      this.privateEndpoints = [];
-      this.publicEndpoints = [];
+      this.serviceEndpoints = [];
+      this.apiEndpoints = [];
       this.apis = [];
       this.portals = [];
       this.gateways = [];
