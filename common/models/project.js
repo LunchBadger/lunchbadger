@@ -26,6 +26,7 @@ module.exports = function(Project) {
         return;
       }
 
+      this.functions = [];
       this.serviceEndpoints = [];
       this.apiEndpoints = [];
       this.apis = [];
