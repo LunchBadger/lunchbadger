@@ -12,6 +12,9 @@ const debug = require('debug')('lunchbadger-workspace:workspace');
 const PROJECT_TEMPLATE = path.normalize(
   path.join(__dirname, '../../server/blank-project.json'));
 
+const FN_ENGINE_TEMPLATE = path.normalize(
+    path.join(__dirname, '../../server/fn-engine.js'));
+
 function ensureWorkspace(app) {
   const wsName = `${config.userName}-${config.userEnv}`;
   const {branch, gitUrl} = config;
@@ -94,6 +97,17 @@ function ensureProjectFileExists() {
   let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
 
   if (!fs.existsSync(projectFile)) {
+    debug(`creating a new project file (${projectFile})`);
+    return ncp(PROJECT_TEMPLATE, projectFile).then(() => true);
+  }
+
+  return Promise.resolve(false);
+}
+
+function ensureFunctionsModelExists() {
+  let fnEngineFile = path.join(config.workspaceDir, 'boot/functions_engine.js');
+
+  if (!fs.existsSync(fnEngineFile)) {
     debug(`creating a new project file (${projectFile})`);
     return ncp(PROJECT_TEMPLATE, projectFile).then(() => true);
   }
