@@ -57,7 +57,15 @@ function ensureWorkspace(app) {
         Workspace.createFromTemplate.bind(Workspace));
 
       needsCommit = true;
-      return createFromTemplate('empty-server', wsName);
+      return createFromTemplate('empty-server', wsName).then(() => {
+        const oldPackage = JSON.parse(fs.readFileSync(pkgFile).toString());
+
+        const newPackageJSON = Object.assign({}, oldPackage);
+        newPackageJSON.dependencies['loopback-component-explorer'] = 'LunchBadger/loopback-component-explorer#user-profile';
+        newPackageJSON.scripts.postinstall = 'npm uninstall loopback-component-explorer && npm install LunchBadger/loopback-component-explorer#user-profile';
+
+        fs.writeFileSync(pkgFile, JSON.stringify(newPackageJSON, null, 2));
+      });
     }
   });
 
