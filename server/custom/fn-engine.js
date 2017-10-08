@@ -16,10 +16,11 @@ module.exports = function(app) {
 };
 
 function emulateServerlessFunction(app, name, fnModule) {
-  let TestModel = app.registry.createModel(name + 'Model', {},
+  let TestModel = app.registry.createModel(name, {},
     {
       dataSource: 'Memory', // TODO: take DS name from request
       base: 'PersistedModel',
+      plural: name,
       public: true,
       'remoting': {
         'sharedMethods': {
@@ -35,7 +36,7 @@ function emulateServerlessFunction(app, name, fnModule) {
   };
   TestModel.remoteMethod(name, {
     returns: {arg: 'result', type: 'object'},
-    http: {verb: 'all'},
+    http: {path: '/', verb: 'get'},
   });
 // WTF 1? remoteMethod declarations must be before disable
 // WTF 2? why I cannot disable them all at once
@@ -59,6 +60,7 @@ function emulateServerlessFunction(app, name, fnModule) {
   TestModel.disableRemoteMethod('patchOrCreate', true);
   TestModel.disableRemoteMethod('replaceOrCreate', true);
   TestModel.disableRemoteMethod('create', true);
-  TestModel.disableRemoteMethod('findById', true);
+  TestModel.disableRemoteMethod('updateOrCreate', true);
+  TestModel.disableRemoteMethod('findOrCreate', true);
 }
 
