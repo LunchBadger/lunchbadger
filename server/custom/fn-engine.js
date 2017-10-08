@@ -32,7 +32,11 @@ function emulateServerlessFunction(app, name, fnModule) {
   app.model(TestModel);
   TestModel[name] = function(cb) {
     console.log('executing', name);
-    cb(null, 'ttt' + fnModule[name](app));
+    // default is to module.export = function(app) {}
+    // possible module.export.fnName = function(app) {}
+    let executable = typeof fnModule === 'function' ? fnModule : fnModule[name];
+
+    cb(null, 'ttt' + executable(app));
   };
   TestModel.remoteMethod(name, {
     returns: {arg: 'result', type: 'object'},
@@ -61,6 +65,7 @@ function emulateServerlessFunction(app, name, fnModule) {
   TestModel.disableRemoteMethod('replaceOrCreate', true);
   TestModel.disableRemoteMethod('create', true);
   TestModel.disableRemoteMethod('updateOrCreate', true);
+  TestModel.disableRemoteMethod('updateAttributes', false);
   TestModel.disableRemoteMethod('findOrCreate', true);
 }
 
