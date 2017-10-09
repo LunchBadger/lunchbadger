@@ -155,6 +155,20 @@ module.exports = function(app, cb) {
     });
   });
 
+  ModelDefinition.observe('before delete', (ctx, next) => {
+    console.log('Going to delete %s matching %j',
+      ctx.Model.pluralModelName,
+      ctx.where);
+
+    let id = ctx.where.id.replace('server.', '');
+    let filename = ModelDefinition.toFilename(id);
+    const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename + '.js');
+    fs.unlink(fnPath, ()=>{
+      console.log('file removed', fnPath);
+    });
+    next();
+  });
+
   DataSourceDefinition.observe('before save', (ctx, next) => {
     if (ctx.instance.connector === 'memory') {
       // memory connector is built in
