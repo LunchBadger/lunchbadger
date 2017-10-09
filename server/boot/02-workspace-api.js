@@ -46,6 +46,13 @@ module.exports = function(app, cb) {
       return;
     }
 
+    const filename = kebabCase(ctx.instance.name) + '.js';
+    const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
+    if (fs.existsSync(modelPath)) {
+      next();
+      return;
+    }
+
     mkdirp(path.join(config.workspaceDir, 'server', 'functions'), err => {
       if (err) {
         throw err;
@@ -61,7 +68,6 @@ module.exports = function(app, cb) {
           functionName: ctx.instance.name
         });
 
-        const filename = kebabCase(ctx.instance.name) + '.js';
         const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
 
         fs.writeFile(fnPath, output, err => {
@@ -73,8 +79,6 @@ module.exports = function(app, cb) {
             if (err) {
               throw err;
             }
-
-            const filename = kebabCase(ctx.instance.name) + '.js';
 
             const template = handlebars.compile(data);
             const output = template({
