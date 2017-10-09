@@ -1,5 +1,5 @@
 'use strict';
-
+const _ = require('lodash');
 const promisify = require('es6-promisify');
 const config = require('./config');
 const exec = promisify(require('child_process').exec);
@@ -17,6 +17,50 @@ function ensureWorkspace(app) {
   const {branch, gitUrl} = config;
 
   let Workspace = app.workspace.models.Workspace;
+  let TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
+
+  // HACK to provide custom template folder
+  Workspace._loadProjectTemplate = function(templateName) {
+    let template;
+    try {
+      template = require(
+        '../../templates/projects/' + templateName + '/data');
+    } catch (e) {
+      console.error('Cannot load project template %j: %s',
+                    templateName, e.stack);
+      return null;
+    }
+    // TODO(bajtos) build a full list of files here, so that
+    // when two templates provide a different version of the same file,
+    // we resolve the conflict here, before any files are copied
+    template.files = [path.join(TEMPLATE_DIR, templateName, 'files')];
+
+    let sources = [template];
+    /* eslint-disable one-var */
+    if (template.inherits) for (let ix in template.inherits) {
+      let t = template.inherits[ix];
+      let data = this._loadProjectTemplate(t);
+      if (!data) return null; // the error was already reported
+      delete data.supportedLBVersions;
+      sources.unshift(data);
+    }
+    /* eslint-enable one-var */
+
+    // TODO(bajtos) use topological sort to resolve duplicated dependencies
+    // e.g. A inherits B,C; B inherits D; C inherits D too
+
+    // merge into a new object to preserve the originals
+    sources.unshift({});
+
+    // when merging arrays, concatenate them (lodash replaces by default)
+    sources.push((a, b) => {
+      if (_.isArray(a)) {
+        return a.concat(b);
+      }
+    });
+
+    return _.mergeWith.apply(_, sources);
+  }.bind(Workspace);
 
   let pkgFile = path.join(config.workspaceDir, 'package.json');
 
@@ -57,7 +101,7 @@ function ensureWorkspace(app) {
         Workspace.createFromTemplate.bind(Workspace));
 
       needsCommit = true;
-      return createFromTemplate('empty-server', wsName);
+      return createFromTemplate('lb-server', wsName);
     }
   });
 
