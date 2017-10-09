@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const assert = require('assert');
 const handlebars = require('handlebars');
 const kebabCase = require('lodash.kebabcase');
 const mkdirp = require('mkdirp');
@@ -24,13 +25,50 @@ workspace.middleware('initial', cors({
 
 module.exports = function(app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition} = workspace.models;
+  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
 
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  ModelDefinition.observe('before save', function(ctx, next) {
+  // This will provide additional file lookup pattern
+  ModelDefinition.settings.configFiles.push('internal/*json');
+
+  // Hack to overrride hardcoded "models" folder filtering
+  ConfigFile.getModelDefFiles = function(configFiles, facetName) {
+    console.log(configFiles);
+    assert(Array.isArray(configFiles));
+    let configFile;
+    let results = [];
+    for (let i = 0; i < configFiles.length; i++) {
+      configFile = configFiles[i];
+      // TODO(ritch) support other directories
+      if (configFile && configFile.getFacetName() === facetName &&
+         (configFile.getDirName() === 'models' || configFile.getDirName() === 'internal')) {
+        results.push(configFile);
+      }
+    }
+    return results;
+  };
+
+  // HACK to override location of where model is saved
+  ModelDefinition.getPath = function(facetName, obj) {
+    if (obj.configFile) return obj.configFile;
+
+    if (obj.kind === 'function') {
+      // TODO set internal as  ModelDefinition.settings.internalDir
+      return path.join(facetName, 'internal',
+        ModelDefinition.toFilename(obj.name) + '.json');
+    }
+    // TODO(ritch) the path should be customizable
+    return path.join(facetName, ModelDefinition.settings.defaultDir,
+      ModelDefinition.toFilename(obj.name) + '.json');
+  };
+
+  ModelDefinition.observe('before save', (ctx, next) => {
+    console.log('before save');
+    console.log(ctx);
+    console.log(ctx.instance);
     if (ctx.instance.kind !== 'function') {
       next();
       return;
@@ -47,14 +85,14 @@ module.exports = function(app, cb) {
     }, next);
   });
 
-  ModelDefinition.observe('after save', function(ctx, next) {
+  ModelDefinition.observe('after save', (ctx, next) => {
     if (ctx.instance.kind !== 'function') {
       next();
       return;
     }
 
     const filename = kebabCase(ctx.instance.name) + '.js';
-    const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
+    const modelPath = path.join(config.workspaceDir, 'server', 'internal', filename);
 
     if (!ctx.isNewInstance) {
       next();
@@ -66,7 +104,7 @@ module.exports = function(app, cb) {
         throw err;
       }
 
-      fs.readFile(FUNCTION_TEMPLATE, { encoding: 'utf8' }, (err, data) => {
+      fs.readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'}, (err, data) => {
         if (err) {
           throw err;
         }
@@ -83,7 +121,7 @@ module.exports = function(app, cb) {
             throw err;
           }
 
-          fs.readFile(FUNCTION_MODEL_TEMPLATE, { encoding: 'utf8' }, (err, data) => {
+          fs.readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'}, (err, data) => {
             if (err) {
               throw err;
             }
@@ -96,21 +134,20 @@ module.exports = function(app, cb) {
               path: ctx.instance.http.path
             });
 
-            const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
             fs.writeFile(modelPath, output, err => {
               if (err) {
                 throw err;
               }
 
               next();
-            })
+            });
           });
         });
       });
     });
   });
 
-  DataSourceDefinition.observe('before save', function(ctx, next) {
+  DataSourceDefinition.observe('before save', (ctx, next) => {
     if (ctx.instance.connector === 'memory') {
       // memory connector is built in
       return next();
@@ -130,7 +167,7 @@ module.exports = function(app, cb) {
       });
   });
 
-  DataSourceDefinition.observe('before delete', function(ctx, next) {
+  DataSourceDefinition.observe('before delete', (ctx, next) => {
     DataSourceDefinition.find()
       .then(allDs => {
         let deps = new Map();
