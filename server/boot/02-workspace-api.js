@@ -36,7 +36,7 @@ module.exports = function(app, cb) {
       return;
     }
 
-    ctx.base = 'Model';
+    ctx.instance.base = 'Model';
     next();
   });
 
