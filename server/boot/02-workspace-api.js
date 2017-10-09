@@ -35,7 +35,6 @@ module.exports = function(app, cb) {
 
   // Hack to overrride hardcoded "models" folder filtering
   ConfigFile.getModelDefFiles = function(configFiles, facetName) {
-    console.log(configFiles);
     assert(Array.isArray(configFiles));
     let configFile;
     let results = [];
@@ -65,9 +64,6 @@ module.exports = function(app, cb) {
   };
 
   ModelDefinition.observe('before save', (ctx, next) => {
-    console.log('before save');
-    console.log(ctx);
-    console.log(ctx.instance);
     if (ctx.instance.kind !== 'function') {
       next();
       return;
@@ -75,6 +71,7 @@ module.exports = function(app, cb) {
 
     ctx.instance.public = true;
     ctx.instance.base = 'Model';
+    ctx.instance.http.path = ctx.instance.name;
 
     ModelConfig.create({
       public: true,
