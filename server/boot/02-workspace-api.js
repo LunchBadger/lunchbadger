@@ -1,7 +1,16 @@
 'use strict';
 
-const config = require('../../common/lib/config');
+const fs = require('fs');
+const path = require('path');
 const cors = require('cors');
+const handlebars = require('handlebars');
+const kebabCase = require('lodash.kebabcase');
+const mkdirp = require('mkdirp');
+const config = require('../../common/lib/config');
+
+const TEMPLATES_PATH = path.join(__dirname, '..', '..', 'templates');
+const FUNCTION_MODEL_TEMPLATE = path.join(TEMPLATES_PATH, 'fnmodel.js.tmpl');
+const FUNCTION_TEMPLATE = path.join(TEMPLATES_PATH, 'fn.js.tmpl');
 
 process.env.WORKSPACE_DIR = config.workspaceDir;
 const workspace = require('loopback-workspace');
@@ -15,10 +24,77 @@ workspace.middleware('initial', cors({
 
 module.exports = function(app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, PackageDefinition} = workspace.models;
+  const {DataSourceDefinition, ModelDefinition, PackageDefinition} = workspace.models;
 
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
+  });
+
+  ModelDefinition.observe('before save', function(ctx, next) {
+    if (ctx.instance.kind !== 'function') {
+      next();
+      return;
+    }
+
+    ctx.base = 'Model';
+    next();
+  });
+
+  ModelDefinition.observe('after save', function(ctx, next) {
+    if (ctx.instance.kind !== 'function') {
+      next();
+      return;
+    }
+
+    mkdirp(path.join(config.workspaceDir, 'server', 'functions'), err => {
+      if (err) {
+        throw err;
+      }
+
+      fs.readFile(FUNCTION_TEMPLATE, { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+          throw err;
+        }
+
+        const template = handlebars.compile(data);
+        const output = template({
+          functionName: ctx.instance.name
+        });
+
+        const filename = kebabCase(ctx.instance.name) + '.js';
+        const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
+
+        fs.writeFile(fnPath, output, err => {
+          if (err) {
+            throw err;
+          }
+
+          fs.readFile(FUNCTION_MODEL_TEMPLATE, { encoding: 'utf8' }, (err, data) => {
+            if (err) {
+              throw err;
+            }
+
+            const filename = kebabCase(ctx.instance.name) + '.js';
+
+            const template = handlebars.compile(data);
+            const output = template({
+              modelClassName: ctx.instance.name,
+              functionName: ctx.instance.name,
+              filename: filename
+            });
+
+            const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
+            fs.writeFile(modelPath, output, err => {
+              if (err) {
+                throw err;
+              }
+
+              next();
+            })
+          });
+        });
+      });
+    });
   });
 
   DataSourceDefinition.observe('before save', function(ctx, next) {
