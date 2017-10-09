@@ -24,7 +24,7 @@ workspace.middleware('initial', cors({
 
 module.exports = function(app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, ModelDefinition, PackageDefinition} = workspace.models;
+  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition} = workspace.models;
 
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
@@ -36,8 +36,15 @@ module.exports = function(app, cb) {
       return;
     }
 
+    ctx.instance.public = true;
     ctx.instance.base = 'Model';
-    next();
+
+    ModelConfig.create({
+      public: true,
+      dataSource: null,
+      facetName: 'server',
+      name: ctx.instance.name
+    }, next);
   });
 
   ModelDefinition.observe('after save', function(ctx, next) {
@@ -48,7 +55,8 @@ module.exports = function(app, cb) {
 
     const filename = kebabCase(ctx.instance.name) + '.js';
     const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
-    if (fs.existsSync(modelPath)) {
+
+    if (!ctx.isNewInstance) {
       next();
       return;
     }
@@ -84,7 +92,8 @@ module.exports = function(app, cb) {
             const output = template({
               modelClassName: ctx.instance.name,
               functionName: ctx.instance.name,
-              filename: filename
+              filename: filename,
+              path: ctx.instance.http.path
             });
 
             const modelPath = path.join(config.workspaceDir, 'server', 'models', filename);
