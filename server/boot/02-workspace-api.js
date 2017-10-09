@@ -5,7 +5,6 @@ const path = require('path');
 const cors = require('cors');
 const assert = require('assert');
 const handlebars = require('handlebars');
-const kebabCase = require('lodash.kebabcase');
 const mkdirp = require('mkdirp');
 const config = require('../../common/lib/config');
 
@@ -91,7 +90,7 @@ module.exports = function(app, cb) {
       return;
     }
 
-    const filename = kebabCase(ctx.instance.name) + '.js';
+    let filename = ModelDefinition.toFilename(ctx.instance.name) + '.js';
     const modelPath = path.join(config.workspaceDir, 'server', 'internal', filename);
 
     if (!ctx.isNewInstance) {
@@ -115,7 +114,6 @@ module.exports = function(app, cb) {
         });
 
         const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
-
         fs.writeFile(fnPath, output, err => {
           if (err) {
             throw err;
