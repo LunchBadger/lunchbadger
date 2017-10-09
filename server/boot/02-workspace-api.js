@@ -63,25 +63,38 @@ module.exports = function(app, cb) {
       ModelDefinition.toFilename(obj.name) + '.json');
   };
 
+  ModelDefinition.observe('access', (ctx, next) => {
+    // console.log('access');
+
+    // console.log(ctx);
+    next();
+  });
   ModelDefinition.observe('before save', (ctx, next) => {
-    if (ctx.instance.kind !== 'function') {
+    console.log('before save');
+    if (ctx.instance) {
+      if (ctx.instance.kind !== 'function') {
+        next();
+        return;
+      }
+
+      ctx.instance.public = true;
+      ctx.instance.base = 'Model';
+      console.log(ctx.instance);
+      ModelConfig.upsert({
+        public: true,
+        dataSource: null,
+        facetName: 'server',
+        name: ctx.instance.name
+      }, next);
+    } else {
+      // TODO: this is PUT scenario
       next();
-      return;
     }
-
-    ctx.instance.public = true;
-    ctx.instance.base = 'Model';
-    ctx.instance.http.path = ctx.instance.name;
-
-    ModelConfig.create({
-      public: true,
-      dataSource: null,
-      facetName: 'server',
-      name: ctx.instance.name
-    }, next);
   });
 
   ModelDefinition.observe('after save', (ctx, next) => {
+    console.log('after save');
+    console.log(ctx.isNewInstance);
     if (ctx.instance.kind !== 'function') {
       next();
       return;
@@ -89,7 +102,7 @@ module.exports = function(app, cb) {
 
     let filename = ModelDefinition.toFilename(ctx.instance.name) + '.js';
     const modelPath = path.join(config.workspaceDir, 'server', 'internal', filename);
-
+    console.log(ctx.isNewInstance);
     if (!ctx.isNewInstance) {
       next();
       return;

@@ -1172,7 +1172,7 @@
       "integrity": "sha1-u08J/5va5ZIKj0K+8NKW+BuA0DQ="
     },
     "eventsource": {
-      "version": "git://github.com/lunchbadger/eventsource.git#9ed0e750c769c55fe371789d3665e49e61229ad3",
+      "version": "github:lunchbadger/eventsource#9ed0e750c769c55fe371789d3665e49e61229ad3",
       "requires": {
         "original": "1.0.0"
       }
@@ -3267,9 +3267,7 @@
       }
     },
     "loopback-component-explorer": {
-      "version": "2.7.0",
-      "resolved": "https://registry.npmjs.org/loopback-component-explorer/-/loopback-component-explorer-2.7.0.tgz",
-      "integrity": "sha1-4n7yIaNT7HgrFanQd15nTpr5fBs=",
+      "version": "github:LunchBadger/loopback-component-explorer#a57ec49ea2eada983497770d33993bf61dbc128b",
       "requires": {
         "cors": "2.8.1",
         "debug": "2.2.0",
@@ -3277,7 +3275,7 @@
         "lodash": "3.10.1",
         "loopback-swagger": "2.8.0",
         "strong-globalize": "2.8.0",
-        "strong-swagger-ui": "21.0.2"
+        "swagger-ui": "2.2.10"
       },
       "dependencies": {
         "lodash": {
@@ -3418,11 +3416,10 @@
         "lodash": "4.17.2",
         "loopback": "2.36.0",
         "loopback-boot": "2.23.0",
-        "loopback-component-explorer": "2.7.0",
         "loopback-datasource-juggler": "2.53.0",
         "method-override": "2.3.7",
         "morgan": "1.7.0",
-        "ncp": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz",
+        "ncp": "2.0.0",
         "normalize-git-url": "3.0.2",
         "semver": "5.3.0",
         "serve-favicon": "2.3.2",
@@ -3680,7 +3677,8 @@
       "dev": true
     },
     "ncp": {
-      "version": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz",
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/ncp/-/ncp-2.0.0.tgz",
       "integrity": "sha1-GVoh1sRuNh0vsSgbo4uR6d9727M="
     },
     "negotiator": {
@@ -5006,11 +5004,6 @@
         }
       }
     },
-    "strong-swagger-ui": {
-      "version": "21.0.2",
-      "resolved": "https://registry.npmjs.org/strong-swagger-ui/-/strong-swagger-ui-21.0.2.tgz",
-      "integrity": "sha1-ISqQDfq1rgTmKOIbWABjK9DZ40c="
-    },
     "strong-wait-till-listening": {
       "version": "1.0.3",
       "resolved": "https://registry.npmjs.org/strong-wait-till-listening/-/strong-wait-till-listening-1.0.3.tgz",
@@ -5050,6 +5043,11 @@
         "q": "1.4.1",
         "superagent": "2.3.0"
       }
+    },
+    "swagger-ui": {
+      "version": "2.2.10",
+      "resolved": "https://registry.npmjs.org/swagger-ui/-/swagger-ui-2.2.10.tgz",
+      "integrity": "sha1-sl56IWZOXZC/OR2zDbCN5B6FLXs="
     },
     "table": {
       "version": "3.8.3",
