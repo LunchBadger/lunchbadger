@@ -153,29 +153,27 @@ function ensureProjectFileExists() {
 }
 
 function ensureFunctionModelSynchronization(app) {
-  return new Promise(resolve => {
-    const ModelDefinition = app.workspace.models.ModelDefinition;
-    ModelDefinition.find((err, definitions) => {
-
-      const functionModelDefs = definitions.filter(def => {
-        return def.kind === 'function';
-      });
-
-      functionModelDefs.forEach(def => {
-        let funcFile = def.configFile
-          .replace(/^server\/internal/, 'server/functions')
-          .replace(/\.json$/, '.js');
-
-        funcFile = path.join(config.workspaceDir, funcFile);
-        
-        return readFile(funcFile, { encoding: 'utf8' })
-          .then(data => {
-            def.code = data;
-            ModelDefinition.update(def);
-            resolve();
-          });
-      });
+  const ModelDefinition = app.workspace.models.ModelDefinition;
+  ModelDefinition.find((err, definitions) => {
+    const functionModelDefs = definitions.filter(def => {
+      return def.kind === 'function';
     });
+
+    const promises = functionModelDefs.map(def => {
+      let funcFile = def.configFile
+        .replace(/^server\/internal/, 'server/functions')
+        .replace(/\.json$/, '.js');
+
+      funcFile = path.join(config.workspaceDir, funcFile);
+      
+      return readFile(funcFile, { encoding: 'utf8' })
+        .then(data => {
+          def.code = data;
+          ModelDefinition.update(def);
+        });
+    });
+
+    return Promise.all(promises);
   });
 };
 

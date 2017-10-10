@@ -17,8 +17,7 @@ module.exports = function(app, cb) {
       app.models.Project.workspaceStatus = status;
     })
     .then(() => {
-      return ensureFunctionModelSynchronization(app)
-        .catch(err => console.error(err));
+      return ensureFunctionModelSynchronization(app);
     })
     .then(cb)
     .catch(err => {
