@@ -1,11 +1,12 @@
 'use strict';
 
-const config = require('../../common/lib/config');
-const {reset} = require('../../common/lib/util');
-const {ensureProjectFileExists} = require('../../common/lib/wsinit');
 const EventSource = require('eventsource');
 const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
+
+const config = require('../../common/lib/config');
+const {reset} = require('../../common/lib/util');
+const {ensureProjectFileExists, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
 
 const DETACHED = '0000000000000000000000000000000000000000';
 
@@ -60,6 +61,9 @@ module.exports = function(app, cb) {
         })
         .then(() => {
           app.models.WorkspaceStatus.proc.reinstallDeps();
+        })
+        .then(() => {
+          return ensureFunctionModelSynchronization(app);
         })
         .catch(err => {
           console.error(err);

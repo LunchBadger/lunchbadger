@@ -2,11 +2,19 @@
 
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
+
+require('util.promisify/shim')();
+
 const cors = require('cors');
 const assert = require('assert');
 const handlebars = require('handlebars');
-const mkdirp = require('mkdirp');
+const mkdirp = util.promisify(require('mkdirp'));
+
 const config = require('../../common/lib/config');
+
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 const TEMPLATES_PATH = path.join(__dirname, '..', '..', 'templates');
 const FUNCTION_MODEL_TEMPLATE = path.join(TEMPLATES_PATH, 'fnmodel.js.tmpl');
@@ -63,14 +71,7 @@ module.exports = function(app, cb) {
       ModelDefinition.toFilename(obj.name) + '.json');
   };
 
-  ModelDefinition.observe('access', (ctx, next) => {
-    // console.log('access');
-
-    // console.log(ctx);
-    next();
-  });
   ModelDefinition.observe('before save', (ctx, next) => {
-    console.log('before save');
     if (ctx.instance) {
       if (ctx.instance.kind !== 'function') {
         next();
@@ -79,8 +80,8 @@ module.exports = function(app, cb) {
 
       ctx.instance.public = true;
       ctx.instance.base = 'Model';
-      console.log(ctx.instance);
       ModelConfig.upsert({
+        id: 'server.' + ctx.instance.name,
         public: true,
         dataSource: null,
         facetName: 'server',
@@ -93,8 +94,11 @@ module.exports = function(app, cb) {
   });
 
   ModelDefinition.observe('after save', (ctx, next) => {
-    console.log('after save');
-    console.log(ctx.isNewInstance);
+    if (ctx.instance === undefined) {
+      next();
+      return;
+    }
+
     if (ctx.instance.kind !== 'function') {
       next();
       return;
@@ -102,57 +106,73 @@ module.exports = function(app, cb) {
 
     let filename = ModelDefinition.toFilename(ctx.instance.name) + '.js';
     const modelPath = path.join(config.workspaceDir, 'server', 'internal', filename);
-    console.log(ctx.isNewInstance);
+    const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
+
     if (!ctx.isNewInstance) {
-      next();
+      mkdirp(path.join(config.workspaceDir, 'server', 'functions'))
+        .then(() => {
+          if (ctx.instance.code && ctx.instance.code.length > 0) {
+            return Promise.resolve(ctx.instance.code);
+          }
+
+          return readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'})
+            .then(data => {
+              const template = handlebars.compile(data);
+              const sourceCode = template({
+                functionName: ctx.instance.name
+              });
+
+              return sourceCode;
+            });
+        })
+        .then(sourceCode => {
+          return writeFile(fnPath, sourceCode);
+        })
+        .then(next)
+        .catch(err => {
+          throw err;
+        });
+
       return;
     }
 
-    mkdirp(path.join(config.workspaceDir, 'server', 'functions'), err => {
-      if (err) {
-        throw err;
-      }
-
-      fs.readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'}, (err, data) => {
-        if (err) {
-          throw err;
+    mkdirp(path.join(config.workspaceDir, 'server', 'functions'))
+      .then(() => {
+        if (ctx.instance.code && ctx.instance.code.length > 0) {
+          return Promise.resolve(ctx.instance.code);
         }
 
+        return readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'})
+          .then(data => {
+            const template = handlebars.compile(data);
+            const sourceCode = template({
+              functionName: ctx.instance.name
+            });
+
+            return sourceCode;
+          });
+      })
+      .then(sourceCode => {
+        return writeFile(fnPath, sourceCode);
+      })
+      .then(() => {
+        return readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'});
+      })
+      .then(data => {
         const template = handlebars.compile(data);
         const output = template({
-          functionName: ctx.instance.name
+          modelClassName: ctx.instance.name,
+          functionName: ctx.instance.name,
+          filename: filename,
+          path: ctx.instance.http.path
         });
 
-        const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
-        fs.writeFile(fnPath, output, err => {
-          if (err) {
-            throw err;
-          }
-
-          fs.readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'}, (err, data) => {
-            if (err) {
-              throw err;
-            }
-
-            const template = handlebars.compile(data);
-            const output = template({
-              modelClassName: ctx.instance.name,
-              functionName: ctx.instance.name,
-              filename: filename,
-              path: ctx.instance.http.path
-            });
-
-            fs.writeFile(modelPath, output, err => {
-              if (err) {
-                throw err;
-              }
-
-              next();
-            });
-          });
-        });
+        return writeFile(modelPath, output);
+      })
+      .then(next)
+      .catch(err => {
+        throw err;
       });
-    });
   });
 
   ModelDefinition.observe('before delete', (ctx, next) => {

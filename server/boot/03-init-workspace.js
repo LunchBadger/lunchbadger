@@ -1,7 +1,7 @@
 'use strict';
 
 const uuidv1 = require('uuid').v1;
-const {ensureWorkspace} = require('../../common/lib/wsinit');
+const {ensureWorkspace, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
 
 module.exports = function(app, cb) {
   ensureWorkspace(app)
@@ -15,8 +15,12 @@ module.exports = function(app, cb) {
     })
     .then(status => {
       app.models.Project.workspaceStatus = status;
-      cb();
     })
+    .then(() => {
+      return ensureFunctionModelSynchronization(app)
+        .catch(err => console.error(err));
+    })
+    .then(cb)
     .catch(err => {
       cb(err);
     });

@@ -1,13 +1,20 @@
 'use strict';
-const _ = require('lodash');
-const promisify = require('es6-promisify');
-const config = require('./config');
-const exec = promisify(require('child_process').exec);
-const {execWs} = require('./util');
 const fs = require('fs');
-const ncp = promisify(require('ncp'));
 const path = require('path');
+const util = require('util');
+
+require('util.promisify/shim')();
+
+const _ = require('lodash');
 const debug = require('debug')('lunchbadger-workspace:workspace');
+const promisify = require('es6-promisify');
+const exec = promisify(require('child_process').exec);
+const ncp = promisify(require('ncp'));
+
+const {execWs} = require('./util');
+const config = require('./config');
+
+const readFile = util.promisify(fs.readFile);
 
 const PROJECT_TEMPLATE = path.normalize(
   path.join(__dirname, '../../server/blank-project.json'));
@@ -145,7 +152,35 @@ function ensureProjectFileExists() {
   return Promise.resolve(false);
 }
 
+function ensureFunctionModelSynchronization(app) {
+  return new Promise(resolve => {
+    const ModelDefinition = app.workspace.models.ModelDefinition;
+    ModelDefinition.find((err, definitions) => {
+
+      const functionModelDefs = definitions.filter(def => {
+        return def.kind === 'function';
+      });
+
+      functionModelDefs.forEach(def => {
+        let funcFile = def.configFile
+          .replace(/^server\/internal/, 'server/functions')
+          .replace(/\.json$/, '.js');
+
+        funcFile = path.join(config.workspaceDir, funcFile);
+        
+        return readFile(funcFile, { encoding: 'utf8' })
+          .then(data => {
+            def.code = data;
+            ModelDefinition.update(def);
+            resolve();
+          });
+      });
+    });
+  });
+};
+
 module.exports = {
   ensureWorkspace,
-  ensureProjectFileExists
+  ensureProjectFileExists,
+  ensureFunctionModelSynchronization
 };
