@@ -95,7 +95,7 @@ template.server = {
 
   componentConfigs: [
     {
-      name: 'loopback-component-explorer',
+      name: 'lunchbadger-component-explorer',
       value: {
         mountPath: '/explorer',
       },
