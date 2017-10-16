@@ -1,23 +1,37 @@
 'use strict';
-
+const config = require('../../common/lib/config');
+const {reset} = require('../../common/lib/util');
 module.exports = function(WorkspaceStatus) {
   WorkspaceStatus.ping = function(cb) {
     cb();
-  }
+  };
 
   WorkspaceStatus.remoteMethod('ping', {
-    description: "For checking whether the server is up. Responds with 204.",
-    http: { verb: 'get', path: '/ping' }
+    description: 'For checking whether the server is up. Responds with 204.',
+    http: {verb: 'get', path: '/ping'}
   });
 
   WorkspaceStatus.restart = function(cb) {
     WorkspaceStatus.proc.restart();
     cb();
   };
+  WorkspaceStatus.hardReset = function(cb) {
+    reset(config.branch).then((hrRes)=>{
+      console.log('hard reset', hrRes);
+      WorkspaceStatus.proc.restart();
+
+      cb();
+    });
+  };
 
   WorkspaceStatus.remoteMethod('restart', {
     description: 'Restart the workspace process',
     http: { verb: 'post', path: '/restart' }
+  });
+
+  WorkspaceStatus.remoteMethod('hardReset', {
+    description: 'Git hard reset and Restart the workspace process',
+    http: {verb: 'post', path: '/hard-reset'}
   });
 
   WorkspaceStatus.reinstallDeps = function(cb) {
