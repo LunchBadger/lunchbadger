@@ -28,6 +28,15 @@
         "forceId": false
       }
     },
+    "function": {
+      "type": "embedsMany",
+      "model": "Function",
+      "property": "functions",
+      "options": {
+        "validate": true,
+        "forceId": false
+      }
+    },
     "api": {
       "type": "embedsMany",
       "model": "API",
