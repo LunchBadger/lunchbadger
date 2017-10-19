@@ -26,7 +26,7 @@ module.exports = function(WorkspaceStatus) {
 
   WorkspaceStatus.remoteMethod('restart', {
     description: 'Restart the workspace process',
-    http: { verb: 'post', path: '/restart' }
+    http: {verb: 'post', path: '/restart'}
   });
 
   WorkspaceStatus.remoteMethod('hardReset', {
@@ -41,7 +41,7 @@ module.exports = function(WorkspaceStatus) {
 
   WorkspaceStatus.remoteMethod('reinstallDeps', {
     description: 'Reinstall the project\'s dependencies',
-    http: { verb: 'post', path: '/reinstall' }
+    http: {verb: 'post', path: '/reinstall'}
   });
 
   // When starting a change stream, send the current view of each of the models
@@ -60,9 +60,12 @@ module.exports = function(WorkspaceStatus) {
 
       WorkspaceStatus.find((err, models) => {
         if (err) {
+          console.log('WorkspaceStatus.find error');
+          console.log(err);
           return cb(err);
         }
         models.forEach(model => {
+          console.log(model.toJSON());
           changes.write({
             target: model.id,
             data: model.toJSON(),
