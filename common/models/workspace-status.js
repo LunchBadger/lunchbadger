@@ -65,7 +65,7 @@ module.exports = function(WorkspaceStatus) {
           return cb(err);
         }
         models.forEach(model => {
-          console.log('change ' + model.toJSON);
+          console.log(model.toJSON());
           changes.write({
             target: model.id,
             data: model.toJSON(),
