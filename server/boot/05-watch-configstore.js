@@ -66,6 +66,7 @@ module.exports = function (app, cb) {
           return ensureFunctionModelSynchronization(app);
         })
         .catch(err => {
+          // eslint-disable-next-line no-console
           console.error(err);
         });
     }

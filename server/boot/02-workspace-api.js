@@ -28,9 +28,9 @@ workspace.middleware('initial', cors({
 module.exports = function (app, cb) {
   app.workspace = workspace;
   const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
-
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
-    debug(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
+    // eslint-disable-next-line no-console
+    console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
   // This will provide additional file lookup pattern

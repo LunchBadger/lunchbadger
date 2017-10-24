@@ -102,7 +102,7 @@ module.exports = function (Project) {
         }
       })
       .catch(err => {
-        console.log(err);
+        debug(err);
         next(new Error('Error saving project'));
       });
   });

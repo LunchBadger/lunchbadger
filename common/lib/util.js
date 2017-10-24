@@ -4,7 +4,6 @@ const debug = require('debug')('lunchbadger-workspace:workspace');
 
 async function execWs (cmd) {
   let res = await exec(cmd, {cwd: process.env.WORKSPACE_DIR});
-  console.log(res, 'aaaaa');
   return res.stdout;
 }
 
