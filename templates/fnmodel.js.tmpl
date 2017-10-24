@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function({{ modelClassName }}) {
+module.exports = function ({{ modelClassName }}) {
   {{ modelClassName }}.{{ functionName }} = require('../functions/{{ filename }}');
 
   {{ modelClassName }}.remoteMethod('{{ functionName }}', {
@@ -8,7 +6,7 @@ module.exports = function({{ modelClassName }}) {
       http: function (context) {
         context.dataSources = {{ modelClassName }}.app.dataSources;
         return context;
-      },
+      }
     },
     returns: {
       type: 'object',

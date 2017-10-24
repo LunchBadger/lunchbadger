@@ -1,4 +1,3 @@
-'use strict';
 const config = require('../../common/lib/config');
 const {reset} = require('../../common/lib/util');
 const debug = require('debug')('lunchbadger-workspace:workspace');
@@ -20,7 +19,6 @@ module.exports = function (WorkspaceStatus) {
     reset(config.branch).then((hrRes) => {
       debug('hard reset', hrRes);
       WorkspaceStatus.proc.restart();
-
       cb();
     });
   };
