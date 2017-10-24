@@ -1,5 +1,3 @@
-'use strict';
-
 const EventSource = require('eventsource');
 const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
@@ -18,7 +16,7 @@ module.exports = function (app, cb) {
     'http://localhost:3002/api/producers/demo/change-stream');
   let connected = false;
   let es = new EventSource(watchUrl);
-  es.addEventListener('data', message => {
+  es.addEventListener('data', async message => {
     let statusUpdate = JSON.parse(message.data);
     let doReset = false;
 
@@ -52,23 +50,16 @@ module.exports = function (app, cb) {
     if (doReset) {
       debug('resetting workspace');
       status.instance = uuidv1();
-      status.save()
-        .then(() => {
-          return reset(branch);
-        })
-        .then(() => {
-          return ensureProjectFileExists();
-        })
-        .then(() => {
-          app.models.WorkspaceStatus.proc.reinstallDeps();
-        })
-        .then(() => {
-          return ensureFunctionModelSynchronization(app);
-        })
-        .catch(err => {
-          // eslint-disable-next-line no-console
-          console.error(err);
-        });
+      try {
+        await status.save();
+        await reset(branch);
+        await ensureProjectFileExists();
+        await app.models.WorkspaceStatus.proc.reinstallDeps();
+        await ensureFunctionModelSynchronization(app);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      };
     }
   });
 
