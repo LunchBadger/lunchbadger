@@ -117,6 +117,7 @@ function ensureWorkspace (app) {
     debug(`Managing workspace in ${config.workspaceDir}`);
     return execWs('git show --format="format:%H" -s');
   }).then((rev) => {
+    console.log('rev', rev);
     return rev.trim();
   });
 

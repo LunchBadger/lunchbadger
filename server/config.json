@@ -21,7 +21,7 @@
     },
     "cors": false,
     "errorHandler": {
-      "disableStackTrace": false
+      "debug": true
     }
   },
   "legacyExplorer": false

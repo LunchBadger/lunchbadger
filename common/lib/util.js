@@ -2,8 +2,10 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
-function execWs (cmd) {
-  return exec(cmd, {cwd: process.env.WORKSPACE_DIR});
+async function execWs (cmd) {
+  let res = await exec(cmd, {cwd: process.env.WORKSPACE_DIR});
+  console.log(res, 'aaaaa');
+  return res.stdout;
 }
 
 async function commit () {
