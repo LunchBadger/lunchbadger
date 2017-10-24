@@ -1,5 +1,5 @@
-const promisify = require('es6-promisify');
-const exec = promisify(require('child_process').exec);
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 function execWs(cmd) {
   return exec(cmd, {cwd: process.env.WORKSPACE_DIR});
