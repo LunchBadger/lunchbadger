@@ -15,13 +15,12 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-redis \
                 loopback-connector-mysql \
                 loopback-connector-manta \
-                LunchBadger/loopback-connector-salesforce \
+                # eslint@3.19 \
+                # LunchBadger/loopback-connector-salesforce \
                 AdChain/loopback-connector-web3 \
                 js-sha256 \
                 socket.io \
                 ethereumjs-testrpc
-
 COPY . /usr/src/app
 ENV NODE_ENV production
-
 CMD [ "npm", "start" ]

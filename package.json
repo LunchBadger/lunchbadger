@@ -16,7 +16,7 @@
     "loopback": "^2.39.0",
     "loopback-boot": "^2.27.0",
     "loopback-component-explorer": "github:LunchBadger/loopback-component-explorer",
-    "loopback-datasource-juggler": "^3.13.0",
+    "loopback-datasource-juggler": "^2.19.0",
     "loopback-workspace": "^3.42.0",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.0",
