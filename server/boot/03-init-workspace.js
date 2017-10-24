@@ -3,7 +3,7 @@
 const uuidv1 = require('uuid').v1;
 const {ensureWorkspace, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
 
-module.exports = function(app, cb) {
+module.exports = function (app, cb) {
   ensureWorkspace(app)
     .then(rev => {
       return app.models.WorkspaceStatus.create({
@@ -24,4 +24,3 @@ module.exports = function(app, cb) {
       cb(err);
     });
 };
-

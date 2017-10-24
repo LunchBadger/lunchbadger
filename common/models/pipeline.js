@@ -1,3 +1,3 @@
-module.exports = function(Pipeline) {
+module.exports = function (Pipeline) {
 
 };

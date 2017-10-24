@@ -13,12 +13,12 @@ template.package = {
   'version': '1.0.0',
   'main': 'server/server.js',
   'engines': {
-    'node': '>=4',
+    'node': '>=4'
   },
   'scripts': {
     'lint': 'eslint .',
     'start': 'node .',
-    'posttest': 'npm run lint && nsp check',
+    'posttest': 'npm run lint && nsp check'
   },
   'dependencies': {
     'compression': '^1.0.3',
@@ -26,19 +26,23 @@ template.package = {
     'helmet': '^1.3.0',
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
-    'strong-error-handler': '^2.0.0',
+    'strong-error-handler': '^2.0.0'
   },
   'devDependencies': {
-    'eslint': '^3.17.1',
-    'eslint-config-loopback': '^8.0.0',
-    'nsp': '^2.1.0',
+    'eslint-config-standard': '10.2.1',
+    'eslint-plugin-import': '2.3.0',
+    'eslint-plugin-node': '4.2.2',
+    'eslint-plugin-promise': '3.5.0',
+    'eslint-plugin-standard': '3.0.1',
+    'eslint': '^4.9.0',
+    'nsp': '^2.1.0'
   },
   // Avoid NPM warning
   'repository': {
     'type': '',
-    'url': '',
+    'url': ''
   },
-  'license': 'UNLICENSED',
+  'license': 'UNLICENSED'
 };
 
 template.common = {
@@ -59,32 +63,33 @@ template.server = {
         'loopback/common/mixins',
         'loopback/server/mixins',
         '../common/mixins',
-        './mixins',
-      ],
-    },
+        './mixins'
+      ]
+    }
   },
 
   config: [
     {name: 'restApiRoot', value: '/api'},
     {name: 'host', value: '0.0.0.0'}, // Listen on all interfaces
     {name: 'port', value: 3000},
-    {name: 'remoting', value: {
-      context: false,
-      rest: {
-        handleErrors: false,
-        normalizeHttpPath: false,
-        xml: false,
-      },
-      json: {
-        strict: false,
-        limit: '100kb',
-      },
-      urlencoded: {
-        extended: true,
-        limit: '100kb',
-      },
-      cors: false,
-    }},
+    {name: 'remoting',
+      value: {
+        context: false,
+        rest: {
+          handleErrors: false,
+          normalizeHttpPath: false,
+          xml: false
+        },
+        json: {
+          strict: false,
+          limit: '100kb'
+        },
+        urlencoded: {
+          extended: true,
+          limit: '100kb'
+        },
+        cors: false
+      }}
   ],
 
   modelConfigs: [
@@ -97,10 +102,10 @@ template.server = {
     {
       name: 'loopback-component-explorer',
       value: {
-        mountPath: '/explorer',
-      },
-    },
-  ],
+        mountPath: '/explorer'
+      }
+    }
+  ]
 };
 
 // An empty server has no client facet

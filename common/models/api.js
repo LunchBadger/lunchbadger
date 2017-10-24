@@ -1,3 +1,3 @@
-module.exports = function(Api) {
+module.exports = function (Api) {
 
 };

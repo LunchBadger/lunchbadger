@@ -10,7 +10,7 @@ const {ensureProjectFileExists, ensureFunctionModelSynchronization} = require('.
 
 const DETACHED = '0000000000000000000000000000000000000000';
 
-module.exports = function(app, cb) {
+module.exports = function (app, cb) {
   const status = app.models.Project.workspaceStatus;
   const branch = config.branch;
 

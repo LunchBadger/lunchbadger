@@ -1,3 +1,3 @@
-module.exports = function(PlanParameters) {
+module.exports = function (PlanParameters) {
 
 };

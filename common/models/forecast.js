@@ -1,3 +1,3 @@
-module.exports = function(Forecast) {
+module.exports = function (Forecast) {
 
 };

@@ -1,3 +1,3 @@
-module.exports = function(ServiceEndpoint) {
+module.exports = function (ServiceEndpoint) {
 
 };

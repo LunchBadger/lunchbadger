@@ -1,3 +1,3 @@
-module.exports = function(Microservice) {
+module.exports = function (Microservice) {
 
 };

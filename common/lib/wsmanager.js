@@ -5,7 +5,7 @@ const nodemonBus = require('nodemon/lib/utils/bus');
 const spawn = require('child_process').spawn;
 const debug = require('debug')('lunchbadger-workspace:wsmanager');
 
-function WsManager(options) {
+function WsManager (options) {
   const obj = nodemon(options);
   const result = Object.create(obj);
   return Object.assign(result, WsManager.prototype, {
@@ -14,19 +14,19 @@ function WsManager(options) {
   });
 }
 
-WsManager.prototype.reinstallDeps = function() {
+WsManager.prototype.reinstallDeps = function () {
   return this._queueYarn(['install']);
 };
 
-WsManager.prototype.addDep = function(pkgName) {
+WsManager.prototype.addDep = function (pkgName) {
   return this._queueYarn(['add', pkgName]);
 };
 
-WsManager.prototype.removeDep = function(...pkgNames) {
+WsManager.prototype.removeDep = function (...pkgNames) {
   return this._queueYarn(['remove', ...pkgNames]);
 };
 
-WsManager.prototype._queueYarn = function(args) {
+WsManager.prototype._queueYarn = function (args) {
   if (!this.yarnsQueued) {
     this.pauseWatching();
   }
@@ -54,7 +54,7 @@ WsManager.prototype._queueYarn = function(args) {
   });
 };
 
-WsManager.prototype._runYarn = function(args) {
+WsManager.prototype._runYarn = function (args) {
   this.emit('install_started', args);
 
   const installer = spawn('yarn', args.concat('--json'), {
@@ -129,7 +129,7 @@ NB: Giant hack that makes use of nodemon implementation details. A better
 let paused = false;
 let restartNeeded = false;
 
-WsManager.prototype.pauseWatching = function() {
+WsManager.prototype.pauseWatching = function () {
   if (paused) {
     return;
   }
@@ -138,7 +138,7 @@ WsManager.prototype.pauseWatching = function() {
   paused = true;
 };
 
-WsManager.prototype.resumeWatching = function() {
+WsManager.prototype.resumeWatching = function () {
   if (!paused) {
     return;
   }
@@ -154,7 +154,7 @@ WsManager.prototype.resumeWatching = function() {
 };
 
 const superEmit = nodemonBus.emit;
-nodemonBus.emit = function(event, ...args) {
+nodemonBus.emit = function (event, ...args) {
   if (paused && event === 'restart') {
     restartNeeded = true;
     return;

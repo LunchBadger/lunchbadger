@@ -3,13 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 
-require('util.promisify/shim')();
-
 const _ = require('lodash');
 const debug = require('debug')('lunchbadger-workspace:workspace');
-const promisify = require('es6-promisify');
-const exec = promisify(require('child_process').exec);
-const ncp = promisify(require('ncp'));
+const exec = util.promisify(require('child_process').exec);
+const ncp = util.promisify(require('ncp'));
 
 const {execWs} = require('./util');
 const config = require('./config');
@@ -19,7 +16,7 @@ const readFile = util.promisify(fs.readFile);
 const PROJECT_TEMPLATE = path.normalize(
   path.join(__dirname, '../../server/blank-project.json'));
 
-function ensureWorkspace(app) {
+function ensureWorkspace (app) {
   const wsName = `${config.userName}-${config.userEnv}`;
   const {branch, gitUrl} = config;
 
@@ -27,14 +24,12 @@ function ensureWorkspace(app) {
   let TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
 
   // HACK to provide custom template folder
-  Workspace._loadProjectTemplate = function(templateName) {
+  Workspace._loadProjectTemplate = function (templateName) {
     let template;
     try {
-      template = require(
-        '../../templates/projects/' + templateName + '/data');
+      template = require('../../templates/projects/' + templateName + '/data');
     } catch (e) {
-      console.error('Cannot load project template %j: %s',
-                    templateName, e.stack);
+      console.error('Cannot load project template %j: %s', templateName, e);
       return null;
     }
     // TODO(bajtos) build a full list of files here, so that
@@ -44,12 +39,14 @@ function ensureWorkspace(app) {
 
     let sources = [template];
     /* eslint-disable one-var */
-    if (template.inherits) for (let ix in template.inherits) {
-      let t = template.inherits[ix];
-      let data = this._loadProjectTemplate(t);
-      if (!data) return null; // the error was already reported
-      delete data.supportedLBVersions;
-      sources.unshift(data);
+    if (template.inherits) {
+      for (let ix in template.inherits) {
+        let t = template.inherits[ix];
+        let data = this._loadProjectTemplate(t);
+        if (!data) return null; // the error was already reported
+        delete data.supportedLBVersions;
+        sources.unshift(data);
+      }
     }
     /* eslint-enable one-var */
 
@@ -75,7 +72,7 @@ function ensureWorkspace(app) {
 
   let promise = Promise.resolve(null);
   if (!fs.existsSync(config.workspaceDir)) {
-    console.log(`Cloning workspace repo to ${config.workspaceDir}`);
+    debug(`Cloning workspace repo to ${config.workspaceDir}`);
 
     promise = promise
       .then(() => {
@@ -102,9 +99,9 @@ function ensureWorkspace(app) {
 
   promise = promise.then(() => {
     if (!fs.existsSync(pkgFile)) {
-      console.log('Creating new LoopBack project');
+      debug('Creating new LoopBack project');
 
-      const createFromTemplate = promisify(
+      const createFromTemplate = util.promisify(
         Workspace.createFromTemplate.bind(Workspace));
 
       needsCommit = true;
@@ -130,9 +127,9 @@ function ensureWorkspace(app) {
   promise = promise.then(() => {
     // Make sure we reload project data, since it may have changed
     const connector = app.dataSources.db.connector;
-    return promisify(connector.loadFromFile.bind(connector))();
+    return util.promisify(connector.loadFromFile.bind(connector))();
   }).then(() => {
-    console.log(`Managing workspace in ${config.workspaceDir}`);
+    debug(`Managing workspace in ${config.workspaceDir}`);
     return execWs('git show --format="format:%H" -s');
   }).then((rev) => {
     return rev.trim();
@@ -141,7 +138,7 @@ function ensureWorkspace(app) {
   return promise;
 };
 
-function ensureProjectFileExists() {
+function ensureProjectFileExists () {
   let projectFile = path.join(config.workspaceDir, 'lunchbadger.json');
 
   if (!fs.existsSync(projectFile)) {
@@ -152,9 +149,12 @@ function ensureProjectFileExists() {
   return Promise.resolve(false);
 }
 
-function ensureFunctionModelSynchronization(app) {
+function ensureFunctionModelSynchronization (app) {
   const ModelDefinition = app.workspace.models.ModelDefinition;
   ModelDefinition.find((err, definitions) => {
+    if (err) {
+      debug(err);
+    }
     const functionModelDefs = definitions.filter(def => {
       return def.kind === 'function';
     });
@@ -165,7 +165,7 @@ function ensureFunctionModelSynchronization(app) {
         .replace(/\.json$/, '.js');
 
       funcFile = path.join(config.workspaceDir, funcFile);
-      
+
       return readFile(funcFile, { encoding: 'utf8' })
         .then(data => {
           def.code = data;

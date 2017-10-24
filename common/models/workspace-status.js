@@ -1,8 +1,8 @@
 'use strict';
 const config = require('../../common/lib/config');
 const {reset} = require('../../common/lib/util');
-module.exports = function(WorkspaceStatus) {
-  WorkspaceStatus.ping = function(cb) {
+module.exports = function (WorkspaceStatus) {
+  WorkspaceStatus.ping = function (cb) {
     cb();
   };
 
@@ -11,12 +11,12 @@ module.exports = function(WorkspaceStatus) {
     http: {verb: 'get', path: '/ping'}
   });
 
-  WorkspaceStatus.restart = function(cb) {
+  WorkspaceStatus.restart = function (cb) {
     WorkspaceStatus.proc.restart();
     cb();
   };
-  WorkspaceStatus.hardReset = function(cb) {
-    reset(config.branch).then((hrRes)=>{
+  WorkspaceStatus.hardReset = function (cb) {
+    reset(config.branch).then((hrRes) => {
       console.log('hard reset', hrRes);
       WorkspaceStatus.proc.restart();
 
@@ -34,7 +34,7 @@ module.exports = function(WorkspaceStatus) {
     http: {verb: 'post', path: '/hard-reset'}
   });
 
-  WorkspaceStatus.reinstallDeps = function(cb) {
+  WorkspaceStatus.reinstallDeps = function (cb) {
     WorkspaceStatus.proc.reinstallDeps();
     cb();
   };
@@ -46,7 +46,7 @@ module.exports = function(WorkspaceStatus) {
 
   // When starting a change stream, send the current view of each of the models
   // down the pipe first thing after connection.
-  WorkspaceStatus.createChangeStream = function(options, cb) {
+  WorkspaceStatus.createChangeStream = function (options, cb) {
     if (typeof options === 'function') {
       cb = options;
       options = undefined;

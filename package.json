@@ -26,8 +26,12 @@
     "shelljs": "^0.7.8"
   },
   "devDependencies": {
+    "eslint-config-standard": "10.2.1",
+    "eslint-plugin-import": "2.3.0",
+    "eslint-plugin-node": "4.2.2",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-standard": "3.0.1",
     "eslint": "^4.9.0",
-    "eslint-config-loopback": "^8.0.0",
     "nsp": "^2.8.1"
   },
   "repository": {

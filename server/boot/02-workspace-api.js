@@ -1,11 +1,6 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-
-require('util.promisify/shim')();
-
 const cors = require('cors');
 const assert = require('assert');
 const handlebars = require('handlebars');
@@ -30,7 +25,7 @@ workspace.middleware('initial', cors({
   exposedHeaders: ['ETag']
 }));
 
-module.exports = function(app, cb) {
+module.exports = function (app, cb) {
   app.workspace = workspace;
   const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
 
@@ -42,7 +37,7 @@ module.exports = function(app, cb) {
   ModelDefinition.settings.configFiles.push('internal/*json');
 
   // Hack to overrride hardcoded "models" folder filtering
-  ConfigFile.getModelDefFiles = function(configFiles, facetName) {
+  ConfigFile.getModelDefFiles = function (configFiles, facetName) {
     assert(Array.isArray(configFiles));
     let configFile;
     let results = [];
@@ -58,7 +53,7 @@ module.exports = function(app, cb) {
   };
 
   // HACK to override location of where model is saved
-  ModelDefinition.getPath = function(facetName, obj) {
+  ModelDefinition.getPath = function (facetName, obj) {
     if (obj.configFile) return obj.configFile;
 
     if (obj.kind === 'function') {
@@ -183,7 +178,7 @@ module.exports = function(app, cb) {
     let id = ctx.where.id.replace('server.', '');
     let filename = ModelDefinition.toFilename(id);
     const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename + '.js');
-    fs.unlink(fnPath, ()=>{
+    fs.unlink(fnPath, () => {
       console.log('file removed', fnPath);
     });
     next();
