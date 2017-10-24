@@ -4,7 +4,7 @@ const {ensureWorkspace, ensureFunctionModelSynchronization} = require('../../com
 module.exports = async (app, cb) => {
   try {
     let rev = await ensureWorkspace(app);
-    let status = app.models.WorkspaceStatus.create({
+    let status = await app.models.WorkspaceStatus.create({
       running: false,
       output: '',
       instance: uuidv1(),
