@@ -23,7 +23,8 @@ template.package = {
     'cors': '^2.5.2',
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
-    'strong-error-handler': '^2.0.0'
+    'strong-error-handler': '^2.0.0',
+    'loopback-component-explorer': 'LunchBadger/loopback-component-explorer#user-profile'
   },
   'devDependencies': {
     'eslint-config-standard': '10.2.1',
