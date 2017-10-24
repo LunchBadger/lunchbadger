@@ -5,7 +5,7 @@ const cors = require('cors');
 const assert = require('assert');
 const handlebars = require('handlebars');
 const mkdirp = util.promisify(require('mkdirp'));
-
+const debug = require('debug')('lunchbadger-workspace:workspace');
 const config = require('../../common/lib/config');
 
 const readFile = util.promisify(fs.readFile);
@@ -30,20 +30,19 @@ module.exports = function (app, cb) {
   const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
 
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
-    console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
+    debug(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
   // This will provide additional file lookup pattern
   ModelDefinition.settings.configFiles.push('internal/*json');
 
-  // Hack to overrride hardcoded "models" folder filtering
+  // DrMegavolt: Hack to override hardcoded "models" folder filtering
   ConfigFile.getModelDefFiles = function (configFiles, facetName) {
     assert(Array.isArray(configFiles));
     let configFile;
     let results = [];
     for (let i = 0; i < configFiles.length; i++) {
       configFile = configFiles[i];
-      // TODO(ritch) support other directories
       if (configFile && configFile.getFacetName() === facetName &&
          (configFile.getDirName() === 'models' || configFile.getDirName() === 'internal')) {
         results.push(configFile);
@@ -88,7 +87,7 @@ module.exports = function (app, cb) {
     }
   });
 
-  ModelDefinition.observe('after save', (ctx, next) => {
+  ModelDefinition.observe('after save', async (ctx, next) => {
     if (ctx.instance === undefined) {
       next();
       return;
@@ -131,55 +130,39 @@ module.exports = function (app, cb) {
       return;
     }
 
-    mkdirp(path.join(config.workspaceDir, 'server', 'functions'))
-      .then(() => {
-        if (ctx.instance.code && ctx.instance.code.length > 0) {
-          return Promise.resolve(ctx.instance.code);
-        }
-
-        return readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'})
-          .then(data => {
-            const template = handlebars.compile(data);
-            const sourceCode = template({
-              functionName: ctx.instance.name
-            });
-
-            return sourceCode;
-          });
-      })
-      .then(sourceCode => {
-        return writeFile(fnPath, sourceCode);
-      })
-      .then(() => {
-        return readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'});
-      })
-      .then(data => {
-        const template = handlebars.compile(data);
-        const output = template({
-          modelClassName: ctx.instance.name,
-          functionName: ctx.instance.name,
-          filename: filename,
-          path: ctx.instance.http.path
-        });
-
-        return writeFile(modelPath, output);
-      })
-      .then(next)
-      .catch(err => {
-        throw err;
+    await mkdirp(path.join(config.workspaceDir, 'server', 'functions'));
+    let sourceCode;
+    if (ctx.instance.code && ctx.instance.code.length > 0) {
+      sourceCode = ctx.instance.code;
+    } else {
+      let fnTemplate = await readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'});
+      const template = handlebars.compile(fnTemplate);
+      sourceCode = template({
+        functionName: ctx.instance.name
       });
+    }
+    await writeFile(fnPath, sourceCode);
+    let data = await readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'});
+    const template = handlebars.compile(data);
+    const output = template({
+      modelClassName: ctx.instance.name,
+      functionName: ctx.instance.name,
+      filename: filename,
+      path: ctx.instance.http.path
+    });
+
+    await writeFile(modelPath, output);
+    next();
   });
 
   ModelDefinition.observe('before delete', (ctx, next) => {
-    console.log('Going to delete %s matching %j',
-      ctx.Model.pluralModelName,
-      ctx.where);
+    debug('Going to delete %s matching %j', ctx.Model.pluralModelName, ctx.where);
 
     let id = ctx.where.id.replace('server.', '');
     let filename = ModelDefinition.toFilename(id);
     const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename + '.js');
     fs.unlink(fnPath, () => {
-      console.log('file removed', fnPath);
+      debug('file removed', fnPath);
     });
     next();
   });

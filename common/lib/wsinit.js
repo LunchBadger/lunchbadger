@@ -23,22 +23,12 @@ function ensureWorkspace (app) {
   let Workspace = app.workspace.models.Workspace;
   let TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
 
-  // HACK to provide custom template folder
+  // DrMegavolt: HACK to provide custom template folder, copy from original project
   Workspace._loadProjectTemplate = function (templateName) {
-    let template;
-    try {
-      template = require('../../templates/projects/' + templateName + '/data');
-    } catch (e) {
-      console.error('Cannot load project template %j: %s', templateName, e);
-      return null;
-    }
-    // TODO(bajtos) build a full list of files here, so that
-    // when two templates provide a different version of the same file,
-    // we resolve the conflict here, before any files are copied
+    let template = require('../../templates/projects/' + templateName + '/data');
     template.files = [path.join(TEMPLATE_DIR, templateName, 'files')];
 
     let sources = [template];
-    /* eslint-disable one-var */
     if (template.inherits) {
       for (let ix in template.inherits) {
         let t = template.inherits[ix];
@@ -48,11 +38,6 @@ function ensureWorkspace (app) {
         sources.unshift(data);
       }
     }
-    /* eslint-enable one-var */
-
-    // TODO(bajtos) use topological sort to resolve duplicated dependencies
-    // e.g. A inherits B,C; B inherits D; C inherits D too
-
     // merge into a new object to preserve the originals
     sources.unshift({});
 
@@ -72,7 +57,7 @@ function ensureWorkspace (app) {
 
   let promise = Promise.resolve(null);
   if (!fs.existsSync(config.workspaceDir)) {
-    debug(`Cloning workspace repo to ${config.workspaceDir}`);
+    debug(`Cloning workspace to ${config.workspaceDir}`);
 
     promise = promise
       .then(() => {
