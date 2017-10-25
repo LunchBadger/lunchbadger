@@ -15,8 +15,7 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-redis \
                 loopback-connector-mysql \
                 loopback-connector-manta \
-                # eslint@3.19 \
-                LunchBadger/loopback-connector-salesforce \
+                LunchBadger/loopback-connector-salesforce#no-cldr \ 
                 AdChain/loopback-connector-web3 \
                 js-sha256 \
                 socket.io \
