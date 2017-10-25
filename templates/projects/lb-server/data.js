@@ -17,6 +17,7 @@ template.package = {
   'scripts': {
     'lint': 'eslint .',
     'start': 'node .',
+    'postinstall': 'npm uninstall loopback-component-explorer && npm install LunchBadger/loopback-component-explorer',
     'posttest': 'npm run lint && nsp check'
   },
   'dependencies': {
@@ -24,7 +25,7 @@ template.package = {
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
     'strong-error-handler': '^2.0.0',
-    'loopback-component-explorer': 'LunchBadger/loopback-component-explorer#user-profile'
+    'loopback-component-explorer': 'LunchBadger/loopback-component-explorer'
   },
   'devDependencies': {
     'eslint-config-standard': '10.2.1',
