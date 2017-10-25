@@ -5,7 +5,7 @@ const path = require('path');
 const WsManager = require('../../common/lib/wsmanager');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
-module.exports = function(app, cb) {
+module.exports = function (app, cb) {
   const wsStatus = app.models.Project.workspaceStatus;
 
   let options = {
@@ -35,7 +35,7 @@ module.exports = function(app, cb) {
     output += buf.toString('utf-8');
   });
 
-  function changeStatus(running, output) {
+  function changeStatus (running, output) {
     if (debounce) {
       clearTimeout(debounce);
     }

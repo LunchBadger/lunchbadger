@@ -1,24 +1,20 @@
-const promisify = require('es6-promisify');
-const exec = promisify(require('child_process').exec);
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+const debug = require('debug')('lunchbadger-workspace:workspace');
 
-function execWs(cmd) {
-  return exec(cmd, {cwd: process.env.WORKSPACE_DIR});
+async function execWs (cmd) {
+  let res = await exec(cmd, {cwd: process.env.WORKSPACE_DIR});
+  return res.stdout;
 }
 
-function commit() {
-  return execWs('git add -A')
-    .then(() => {
-      return execWs('git commit -m "Changes via LunchBadger"');
-    })
-    .then(() => {
-      return execWs('git show --format="format:%H" -s');
-    })
-    .then(rev => {
-      return rev.trim();
-    });
+async function commit () {
+  await execWs('git add -A');
+  await execWs('git commit -m "Changes via LunchBadger"');
+  let rev = await execWs('git show --format="format:%H" -s');
+  return rev.trim();
 }
 
-function push(branch) {
+function push (branch) {
   return execWs(`git push origin ${branch}`)
     .then(() => true)
     .catch((err) => {
@@ -30,11 +26,10 @@ function push(branch) {
     });
 }
 
-function reset(branch) {
-  return execWs('git fetch')
-    .then(() => {
-      return execWs(`git reset --hard origin/${branch}`);
-    });
+async function reset (branch) {
+  await execWs('git fetch');
+  debug(`git reset --hard origin/${branch}`);
+  return execWs(`git reset --hard origin/${branch}`);
 }
 
 module.exports = {

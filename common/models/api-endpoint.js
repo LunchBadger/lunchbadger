@@ -1,3 +1,3 @@
-module.exports = function(ApiEndpoint) {
+module.exports = function (ApiEndpoint) {
 
 };

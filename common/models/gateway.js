@@ -1,3 +1,3 @@
-module.exports = function(Gateway) {
+module.exports = function (Gateway) {
 
 };

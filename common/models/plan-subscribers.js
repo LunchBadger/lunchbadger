@@ -1,3 +1,3 @@
-module.exports = function(PlanSubscribers) {
+module.exports = function (PlanSubscribers) {
 
 };

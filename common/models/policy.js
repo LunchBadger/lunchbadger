@@ -1,3 +1,3 @@
-module.exports = function(Policy) {
+module.exports = function (Policy) {
 
 };

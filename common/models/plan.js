@@ -1,3 +1,3 @@
-module.exports = function(Plan) {
+module.exports = function (Plan) {
 
 };

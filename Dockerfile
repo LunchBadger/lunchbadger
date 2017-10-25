@@ -1,4 +1,6 @@
-FROM node:6
+FROM node:8-alpine
+
+RUN apk update && apk add git
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -12,12 +14,12 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-mongodb \
                 loopback-connector-redis \
                 loopback-connector-mysql \
-                LunchBadger/loopback-connector-salesforce \
+                loopback-connector-manta \
+                LunchBadger/loopback-connector-salesforce#no-cldr \ 
                 AdChain/loopback-connector-web3 \
                 js-sha256 \
                 socket.io \
                 ethereumjs-testrpc
-
 COPY . /usr/src/app
 ENV NODE_ENV production
 

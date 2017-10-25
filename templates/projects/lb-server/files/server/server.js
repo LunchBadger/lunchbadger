@@ -1,10 +1,9 @@
+'use strict';
+
 let loopback = require('loopback');
 let boot = require('loopback-boot');
-let morgan = require('morgan');
 
 let app = module.exports = loopback();
-
-app.use(morgan('dev'));
 
 app.start = function () {
   // start the web server

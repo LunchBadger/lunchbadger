@@ -1,3 +1,3 @@
-module.exports = function(Upgrade) {
+module.exports = function (Upgrade) {
 
 };

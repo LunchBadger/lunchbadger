@@ -1,3 +1,3 @@
-module.exports = function(Tier) {
+module.exports = function (Tier) {
 
 };

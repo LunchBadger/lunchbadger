@@ -3,9 +3,8 @@ const debug = require('debug')('lunchbadger-workspace:project');
 const {execWs, commit, push} = require('../lib/util');
 const config = require('../lib/config');
 
-module.exports = function(Project) {
-
-  Project.prototype.clearProject = function(cb) {
+module.exports = function (Project) {
+  Project.prototype.clearProject = function (cb) {
     let wsModels = Project.app.workspace.models;
 
     async.series([
@@ -26,6 +25,7 @@ module.exports = function(Project) {
         return;
       }
 
+      this.functions = [];
       this.serviceEndpoints = [];
       this.apiEndpoints = [];
       this.apis = [];
@@ -44,7 +44,7 @@ module.exports = function(Project) {
     http: { path: '/clear', verb: 'post' }
   });
 
-  Project.prototype._deleteAllModels = function(cb) {
+  Project.prototype._deleteAllModels = function (cb) {
     let wsModels = Project.app.workspace.models;
 
     async.waterfall([
@@ -63,7 +63,7 @@ module.exports = function(Project) {
     ], cb);
   };
 
-  Project.observe('after save', function(ctx, next) {
+  Project.observe('after save', function (ctx, next) {
     execWs('git status')
 
       // Commit, if necessary
@@ -94,7 +94,7 @@ module.exports = function(Project) {
       .then(success => {
         if (!success) {
           debug('conflict detected');
-          err = new Error('Conflict in Git repository');
+          let err = new Error('Conflict in Git repository');
           err.status = 409;
           next(err);
         } else {
@@ -102,7 +102,7 @@ module.exports = function(Project) {
         }
       })
       .catch(err => {
-        console.log(err);
+        debug(err);
         next(new Error('Error saving project'));
       });
   });

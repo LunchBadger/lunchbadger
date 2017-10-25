@@ -1,0 +1,26 @@
+module.exports = function ({{ modelClassName }}) {
+  {{ modelClassName }}.{{ functionName }} = require('../functions/{{ filename }}');
+
+  {{ modelClassName }}.remoteMethod('{{ functionName }}', {
+    accepts: {
+      http: function (context) {
+        context.dataSources = {{ modelClassName }}.app.dataSources;
+        return context;
+      }
+    },
+    returns: {
+      type: 'object',
+      root: true
+    },
+    http: [
+      {
+        path: '/',
+        verb: 'GET'
+      },
+      {
+        path: '/',
+        verb: 'POST'
+      }
+    ]
+  });
+};

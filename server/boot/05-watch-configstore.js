@@ -1,15 +1,14 @@
-'use strict';
-
-const config = require('../../common/lib/config');
-const {reset} = require('../../common/lib/util');
-const {ensureProjectFileExists} = require('../../common/lib/wsinit');
 const EventSource = require('eventsource');
 const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
+const config = require('../../common/lib/config');
+const {reset} = require('../../common/lib/util');
+const {ensureProjectFileExists, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
+
 const DETACHED = '0000000000000000000000000000000000000000';
 
-module.exports = function(app, cb) {
+module.exports = function (app, cb) {
   const status = app.models.Project.workspaceStatus;
   const branch = config.branch;
 
@@ -17,7 +16,7 @@ module.exports = function(app, cb) {
     'http://localhost:3002/api/producers/demo/change-stream');
   let connected = false;
   let es = new EventSource(watchUrl);
-  es.addEventListener('data', message => {
+  es.addEventListener('data', async message => {
     let statusUpdate = JSON.parse(message.data);
     let doReset = false;
 
@@ -51,19 +50,16 @@ module.exports = function(app, cb) {
     if (doReset) {
       debug('resetting workspace');
       status.instance = uuidv1();
-      status.save()
-        .then(() => {
-          return reset(branch);
-        })
-        .then(() => {
-          return ensureProjectFileExists();
-        })
-        .then(() => {
-          app.models.WorkspaceStatus.proc.reinstallDeps();
-        })
-        .catch(err => {
-          console.error(err);
-        });
+      try {
+        await status.save();
+        await reset(branch);
+        await ensureProjectFileExists();
+        await app.models.WorkspaceStatus.proc.reinstallDeps();
+        await ensureFunctionModelSynchronization(app);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      };
     }
   });
 

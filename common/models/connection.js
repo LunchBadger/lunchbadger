@@ -1,3 +1,3 @@
-module.exports = function(Connection) {
+module.exports = function (Connection) {
 
 };

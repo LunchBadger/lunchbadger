@@ -1,4 +1,7 @@
 {
+  "initial:before": {
+    "loopback#favicon": {}
+  },
   "initial": {
     "cors": {
       "params": {
@@ -8,6 +11,7 @@
       }
     }
   },
+  "session": {},
   "auth": {},
   "parse": {},
   "routes": {
@@ -17,14 +21,15 @@
       ]
     }
   },
+  "files": {},
   "final": {
     "loopback#urlNotFound": {}
   },
   "final:after": {
     "strong-error-handler": {
-      "params": {
-        "debug": true,
-        "log": true
+      "params":{
+        "debug":true,
+        "log":true 
       }
     }
   }
