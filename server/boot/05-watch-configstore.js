@@ -8,7 +8,13 @@ const {ensureProjectFileExists, ensureFunctionModelSynchronization} = require('.
 
 const DETACHED = '0000000000000000000000000000000000000000';
 
-module.exports = function (app, cb) {
+module.exports = function (app) {
+  setTimeout(() => {
+    watchConfigStore();
+  }, process.env.WATCH_DELAY || 30000);
+};
+
+function watchConfigStore (app) {
   const status = app.models.Project.workspaceStatus;
   const branch = config.branch;
 
@@ -76,6 +82,4 @@ module.exports = function (app, cb) {
       connected = false;
     }
   });
-
-  cb();
 };
