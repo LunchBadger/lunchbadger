@@ -4,7 +4,7 @@ const debug = require('debug')('lunchbadger-workspace:workspace');
 
 const config = require('../../common/lib/config');
 const {reset} = require('../../common/lib/util');
-const {ensureProjectFileExists, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
+const {ensureProjectFileExists} = require('../../common/lib/wsinit');
 
 const DETACHED = '0000000000000000000000000000000000000000';
 
@@ -55,7 +55,6 @@ module.exports = function (app, cb) {
         await reset(branch);
         await ensureProjectFileExists();
         await app.models.WorkspaceStatus.proc.reinstallDeps();
-        await ensureFunctionModelSynchronization(app);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);

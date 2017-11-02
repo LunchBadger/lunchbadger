@@ -27,7 +27,7 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
+  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile, Facet} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
@@ -86,6 +86,24 @@ module.exports = function (app, cb) {
     }
   });
 
+  // The idea is to intercept result before it is returned for requests like
+  // /api/Facets/server/models?filter[include]=properties&filter[include]=relations
+  Facet.afterRemote('**', (ctx, modelDef, next) => {
+    if (ctx.req.url.indexOf('/models') >= 0) {
+      ctx.result.forEach(item => {
+        if (item.kind === 'function') {
+          try {
+            let fnPath = path.join(config.workspaceDir, 'server', 'functions', item.name + '.js');
+            item.code = fs.readFileSync(fnPath, 'utf-8');
+          } catch (err) {
+            debug('Failed to load code for function', err);
+          }
+        }
+      });
+    }
+    next();
+  });
+
   ModelDefinition.observe('after save', (ctx, next) => {
     if (ctx.instance === undefined) {
       next();
@@ -139,21 +157,6 @@ module.exports = function (app, cb) {
     });
     next();
   });
-
-  // ModelDefinition.observe('loaded', (ctx, next) => {
-  //   if (ctx.instance) { ctx.instance.code = 'tuuuu'; }
-  //   if (ctx.data) { ctx.data.code = 'rrrrrr'; }
-
-  //   // if (!ctx.instance) { return next(); }
-  //   // // LB 2.x has ctx.instance for find methods and ctx.data for create etc.
-  //   // if (ctx.instance.kind === 'function') {
-  //   //   if (!ctx.instance.code) {
-  //   //     ctx.instance.code = 'zi';
-  //   //   }
-  //   // }
-  //   // console.log(ctx.data);
-  //   next();
-  // });
 
   DataSourceDefinition.observe('before save', (ctx, next) => {
     if (ctx.instance.connector === 'memory') {
