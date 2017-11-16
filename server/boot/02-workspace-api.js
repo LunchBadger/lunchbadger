@@ -27,7 +27,7 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile} = workspace.models;
+  const {DataSourceDefinition, ModelConfig, ModelDefinition, PackageDefinition, ConfigFile, Facet} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
@@ -60,7 +60,6 @@ module.exports = function (app, cb) {
       return path.join(facetName, 'internal',
         ModelDefinition.toFilename(obj.name) + '.json');
     }
-    // TODO(ritch) the path should be customizable
     return path.join(facetName, ModelDefinition.settings.defaultDir,
       ModelDefinition.toFilename(obj.name) + '.json');
   };
@@ -87,7 +86,25 @@ module.exports = function (app, cb) {
     }
   });
 
-  ModelDefinition.observe('after save', async (ctx, next) => {
+  // The idea is to intercept result before it is returned for requests like
+  // /api/Facets/server/models?filter[include]=properties&filter[include]=relations
+  Facet.afterRemote('**', (ctx, modelDef, next) => {
+    if (ctx.req.url.indexOf('/models') >= 0) {
+      ctx.result.forEach(item => {
+        if (item.kind === 'function') {
+          try {
+            let fnPath = path.join(config.workspaceDir, 'server', 'functions', item.name + '.js');
+            item.code = fs.readFileSync(fnPath, 'utf-8');
+          } catch (err) {
+            debug('Failed to load code for function', err);
+          }
+        }
+      });
+    }
+    next();
+  });
+
+  ModelDefinition.observe('after save', (ctx, next) => {
     if (ctx.instance === undefined) {
       next();
       return;
@@ -101,58 +118,32 @@ module.exports = function (app, cb) {
     let filename = ModelDefinition.toFilename(ctx.instance.name) + '.js';
     const modelPath = path.join(config.workspaceDir, 'server', 'internal', filename);
     const fnPath = path.join(config.workspaceDir, 'server', 'functions', filename);
+    (async () => {
+      await mkdirp(path.join(config.workspaceDir, 'server', 'functions'));
 
-    if (!ctx.isNewInstance) {
-      mkdirp(path.join(config.workspaceDir, 'server', 'functions'))
-        .then(() => {
-          if (ctx.instance.code && ctx.instance.code.length > 0) {
-            return Promise.resolve(ctx.instance.code);
-          }
-
-          return readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'})
-            .then(data => {
-              const template = handlebars.compile(data);
-              const sourceCode = template({
-                functionName: ctx.instance.name
-              });
-
-              return sourceCode;
-            });
-        })
-        .then(sourceCode => {
-          return writeFile(fnPath, sourceCode);
-        })
-        .then(next)
-        .catch(err => {
-          throw err;
+      let sourceCode;
+      if (ctx.instance.code && ctx.instance.code.length > 0) {
+        sourceCode = ctx.instance.code;
+      } else {
+        let fnTemplate = await readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'});
+        const template = handlebars.compile(fnTemplate);
+        sourceCode = template({
+          functionName: ctx.instance.name
         });
+        ctx.instance.code = sourceCode;
+      }
+      await writeFile(fnPath, sourceCode);
 
-      return;
-    }
-
-    await mkdirp(path.join(config.workspaceDir, 'server', 'functions'));
-    let sourceCode;
-    if (ctx.instance.code && ctx.instance.code.length > 0) {
-      sourceCode = ctx.instance.code;
-    } else {
-      let fnTemplate = await readFile(FUNCTION_TEMPLATE, {encoding: 'utf8'});
-      const template = handlebars.compile(fnTemplate);
-      sourceCode = template({
-        functionName: ctx.instance.name
+      let data = await readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'});
+      const template = handlebars.compile(data);
+      const output = template({
+        modelClassName: ctx.instance.name,
+        functionName: ctx.instance.name,
+        filename: filename,
+        path: ctx.instance.http.path
       });
-    }
-    await writeFile(fnPath, sourceCode);
-    let data = await readFile(FUNCTION_MODEL_TEMPLATE, {encoding: 'utf8'});
-    const template = handlebars.compile(data);
-    const output = template({
-      modelClassName: ctx.instance.name,
-      functionName: ctx.instance.name,
-      filename: filename,
-      path: ctx.instance.http.path
-    });
-
-    await writeFile(modelPath, output);
-    next();
+      return writeFile(modelPath, output);
+    })().then(next);
   });
 
   ModelDefinition.observe('before delete', (ctx, next) => {

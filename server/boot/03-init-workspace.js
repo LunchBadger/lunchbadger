@@ -1,5 +1,5 @@
 const uuidv1 = require('uuid').v1;
-const {ensureWorkspace, ensureFunctionModelSynchronization} = require('../../common/lib/wsinit');
+const {ensureWorkspace} = require('../../common/lib/wsinit');
 
 module.exports = async (app, cb) => {
   try {
@@ -11,7 +11,6 @@ module.exports = async (app, cb) => {
       revision: rev
     });
     app.models.Project.workspaceStatus = status;
-    await ensureFunctionModelSynchronization(app);
     cb();
   } catch (err) {
     cb(err);
