@@ -38,7 +38,10 @@ module.exports = function (app, cb) {
       for (const ref of Object.keys(statusUpdate.branches)) {
         if (ref === branch) {
           const newRev = statusUpdate.branches[ref];
-          if (newRev !== status.revision && newRev !== DETACHED) {
+          // kswiber: Commenting condition below. This condition is preventing 
+          // dependency install on container init.
+          // See: https://github.com/LunchBadger/lunchbadger/issues/24
+          if (/*newRev !== status.revision &&*/ newRev !== DETACHED) {
             debug(`${branch} changed from ${status.revision} to ${newRev}`);
             doReset = true;
           }
