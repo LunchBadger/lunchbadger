@@ -6,8 +6,6 @@
     "start": "node .",
     "start-sk": "WATCH_URL=http://api.cluster.local/api/producers/demo/change-stream GIT_URL=http://api.cluster.local/git/demo.git node .",
     "start-staging": "WATCH_URL=http://staging-api.lunchbadger.com/api/producers/demo/change-stream GIT_URL=http://staging-api.lunchbadger.com/git/demo.git node .",
-  
-    "postinstall": "npm uninstall loopback-component-explorer && npm install LunchBadger/loopback-component-explorer",
     "pretest": "eslint .",
     "posttest": "nsp check"
   },
