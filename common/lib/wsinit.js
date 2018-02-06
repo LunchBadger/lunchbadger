@@ -90,7 +90,7 @@ function ensureWorkspace (app) {
         Workspace.createFromTemplate.bind(Workspace));
 
       needsCommit = true;
-      return createFromTemplate('lb-server', wsName);
+      return createFromTemplate('lb-server', wsName, {loopbackVersion: '3.x'});
     }
   });
 
