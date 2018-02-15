@@ -13,11 +13,13 @@ module.exports = function (app, cb) {
   const branch = config.branch;
 
   const watchUrl = (process.env.WATCH_URL ||
-    'http://localhost:3002/api/producers/demo/change-stream');
+    'http://localhost:3002/change-stream/demo');
   let connected = false;
   let es = new EventSource(watchUrl);
   es.addEventListener('data', async message => {
     let statusUpdate = JSON.parse(message.data);
+    console.log(statusUpdate);
+
     let doReset = false;
 
     if (statusUpdate.type === 'push') {
@@ -41,7 +43,7 @@ module.exports = function (app, cb) {
           // kswiber: Commenting condition below. This condition is preventing 
           // dependency install on container init.
           // See: https://github.com/LunchBadger/lunchbadger/issues/24
-          if (/*newRev !== status.revision &&*/ newRev !== DETACHED) {
+          if (/* newRev !== status.revision && */ newRev !== DETACHED) {
             debug(`${branch} changed from ${status.revision} to ${newRev}`);
             doReset = true;
           }
