@@ -17,24 +17,24 @@ module.exports = function (app, cb) {
   let connected = false;
   let es = new EventSource(watchUrl);
   es.addEventListener('data', async message => {
+    debug('SSE event inbound');
     let statusUpdate = JSON.parse(message.data);
-    console.log(statusUpdate);
-
+    debug(statusUpdate);
     let doReset = false;
 
     if (statusUpdate.type === 'push') {
-      debug('git push detected');
-
-      for (const change of statusUpdate.changes) {
-        if (change.type === 'head' && change.ref === branch) {
-          if (change.after !== status.revision && change.after !== DETACHED) {
-            debug(`${branch} changed from ${status.revision} to ${change.after}`);
-            doReset = true;
-          }
-          break;
+      debug(`local ${branch} ${status.revision}`);
+      if (statusUpdate.ref.indexOf('/' + branch) >= 0) {
+        debug(`branch matched ${statusUpdate.ref}`);
+        if (statusUpdate.after !== status.revision) {
+          debug('upstream revision changed, updating local repo');
+          doReset = true;
+        } else {
+          debug('upstream version is the same as local');
         }
       }
     } else if (statusUpdate.type === 'initial') {
+      // SK: have no idea how to get there. will never execute
       debug('received initial branch status');
 
       for (const ref of Object.keys(statusUpdate.branches)) {
