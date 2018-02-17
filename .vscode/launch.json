@@ -9,7 +9,7 @@
             "request": "launch",
             "env": {
                 "GIT_URL":"http://api.cluster.local/git/demo.git",
-                "WATCH_URL": "http://api.cluster.local/api/producers/demo/change-stream"
+                "WATCH_URL": "http://api.cluster.local/change-stream/demo"
             },
             "name": "Launch Program",
             "program": "${workspaceFolder}/server/server"

@@ -11,7 +11,7 @@ const ncp = util.promisify(require('ncp'));
 const {execWs} = require('./util');
 const config = require('./config');
 
-const readFile = util.promisify(fs.readFile);
+// const readFile = util.promisify(fs.readFile);
 
 const PROJECT_TEMPLATE = path.normalize(
   path.join(__dirname, '../../server/blank-project.json'));
