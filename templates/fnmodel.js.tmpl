@@ -3,6 +3,7 @@ module.exports = function ({{ modelClassName }}) {
 
   {{ modelClassName }}.remoteMethod('{{ functionName }}', {
     accepts: {
+      type: 'object',
       http: function (context) {
         context.dataSources = {{ modelClassName }}.app.dataSources;
         return context;
