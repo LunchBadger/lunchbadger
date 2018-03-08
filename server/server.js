@@ -1,7 +1,10 @@
 let loopback = require('loopback');
 let boot = require('loopback-boot');
 let morgan = require('morgan');
-
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  // application specific logging, throwing an error, or other logic here
+});
 let app = module.exports = loopback();
 
 app.use(morgan('dev'));

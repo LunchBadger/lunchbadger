@@ -1,6 +1,6 @@
 FROM node:8-alpine
 
-RUN apk update && apk add git
+RUN apk update && apk add git && apk add openssh
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
