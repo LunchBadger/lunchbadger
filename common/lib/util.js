@@ -32,9 +32,15 @@ async function reset (branch) {
   return execWs(`git reset --hard origin/${branch}`);
 }
 
+async function selfDistruct () {
+  debug('Instructed to shutdown process');
+  process.exit(999);
+}
+
 module.exports = {
   execWs,
   commit,
   push,
-  reset
+  reset,
+  selfDistruct
 };
