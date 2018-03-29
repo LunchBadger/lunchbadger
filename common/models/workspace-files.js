@@ -8,7 +8,8 @@ module.exports = function (WorkspaceFiles) {
   WorkspaceFiles.getFiles = function (cb) {
     fileProvider.serialize().then(data => cb(null, data));
   };
-  WorkspaceFiles.updateFiles = function (cb) {
+  WorkspaceFiles.updateFiles = function ({files}, cb) {
+    fileProvider.deserialize(files);
     cb();
   };
   WorkspaceFiles.remoteMethod('getFiles', {

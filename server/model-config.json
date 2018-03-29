@@ -23,7 +23,8 @@
       "remoting": {
         "sharedMethods": {
           "*": false,
-          "getFiles": true
+          "getFiles": true,
+          "updateFiles": true
         }
       }
     },
