@@ -17,6 +17,10 @@
     "dataSource": "db",
     "public": true
   },
+  "WorkspaceFiles": {
+    "dataSource": "memory",
+    "public": true
+  },
   "Gateway": {
     "dataSource": "db",
     "public": false
