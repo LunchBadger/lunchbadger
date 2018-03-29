@@ -19,6 +19,14 @@
   },
   "WorkspaceFiles": {
     "dataSource": "memory",
+    "options": {
+      "remoting": {
+        "sharedMethods": {
+          "*": false,
+          "getFiles": true
+        }
+      }
+    },
     "public": true
   },
   "Gateway": {
