@@ -1,5 +1,5 @@
 const config = require('../../common/lib/config');
-const {reset, selfDistruct} = require('../../common/lib/util');
+const {reset, selfDestruct} = require('../../common/lib/util');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 module.exports = function (WorkspaceStatus) {
   WorkspaceStatus.ping = function (cb) {
@@ -15,8 +15,8 @@ module.exports = function (WorkspaceStatus) {
     WorkspaceStatus.proc.restart();
     cb();
   };
-  WorkspaceStatus.selfDistruct = function (cb) {
-    selfDistruct();
+  WorkspaceStatus.selfDestruct = function (cb) {
+    selfDestruct();
     cb();
   };
 
