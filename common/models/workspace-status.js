@@ -37,9 +37,9 @@ module.exports = function (WorkspaceStatus) {
     description: 'Git hard reset and Restart the workspace process',
     http: {verb: 'post', path: '/hard-reset'}
   });
-  WorkspaceStatus.remoteMethod('selfDistruct', {
+  WorkspaceStatus.remoteMethod('selfDestruct', {
     description: 'Kill workspace and force recreation',
-    http: {verb: 'post', path: '/self-distruct'}
+    http: {verb: 'post', path: '/self-destruct'}
   });
 
   WorkspaceStatus.reinstallDeps = function (cb) {
