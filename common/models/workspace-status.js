@@ -1,5 +1,5 @@
 const config = require('../../common/lib/config');
-const {reset} = require('../../common/lib/util');
+const {reset, selfDistruct} = require('../../common/lib/util');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 module.exports = function (WorkspaceStatus) {
   WorkspaceStatus.ping = function (cb) {
@@ -15,6 +15,11 @@ module.exports = function (WorkspaceStatus) {
     WorkspaceStatus.proc.restart();
     cb();
   };
+  WorkspaceStatus.selfDistruct = function (cb) {
+    selfDistruct();
+    cb();
+  };
+
   WorkspaceStatus.hardReset = function (cb) {
     reset(config.branch).then((hrRes) => {
       debug('hard reset', hrRes);
@@ -31,6 +36,10 @@ module.exports = function (WorkspaceStatus) {
   WorkspaceStatus.remoteMethod('hardReset', {
     description: 'Git hard reset and Restart the workspace process',
     http: {verb: 'post', path: '/hard-reset'}
+  });
+  WorkspaceStatus.remoteMethod('selfDistruct', {
+    description: 'Kill workspace and force recreation',
+    http: {verb: 'post', path: '/self-distruct'}
   });
 
   WorkspaceStatus.reinstallDeps = function (cb) {

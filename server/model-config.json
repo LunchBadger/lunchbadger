@@ -99,6 +99,7 @@
           "ping": true,
           "restart": true,
           "hardReset": true,
+          "selfDistruct": true,
           "reinstallDeps": true,
           "createChangeStream": true,
           "findById": true
