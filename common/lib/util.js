@@ -34,7 +34,7 @@ async function reset (branch) {
 
 async function selfDestruct () {
   debug('Instructed to shutdown process');
-  process.exit(999);
+  process.exit();
 }
 
 module.exports = {

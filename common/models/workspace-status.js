@@ -16,7 +16,7 @@ module.exports = function (WorkspaceStatus) {
     cb();
   };
   WorkspaceStatus.selfDestruct = function (cb) {
-    selfDestruct();
+    setImmediate(selfDestruct);
     cb();
   };
 
