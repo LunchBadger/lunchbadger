@@ -17,6 +17,19 @@
     "dataSource": "db",
     "public": true
   },
+  "WorkspaceFiles": {
+    "dataSource": "memory",
+    "options": {
+      "remoting": {
+        "sharedMethods": {
+          "*": false,
+          "getFiles": true,
+          "updateFiles": true
+        }
+      }
+    },
+    "public": true
+  },
   "Gateway": {
     "dataSource": "db",
     "public": false
@@ -99,6 +112,7 @@
           "ping": true,
           "restart": true,
           "hardReset": true,
+          "selfDestruct": true,
           "reinstallDeps": true,
           "createChangeStream": true,
           "findById": true
