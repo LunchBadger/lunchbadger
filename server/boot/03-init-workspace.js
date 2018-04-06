@@ -1,5 +1,6 @@
 const uuidv1 = require('uuid').v1;
 const {ensureWorkspace} = require('../../common/lib/wsinit');
+const debug = require('debug')('lunchbadger-workspace:init:3');
 
 module.exports = async (app, cb) => {
   try {
@@ -13,6 +14,7 @@ module.exports = async (app, cb) => {
     app.models.Project.workspaceStatus = status;
     cb();
   } catch (err) {
+    debug(err);
     cb(err);
   }
 };

@@ -2,7 +2,7 @@ FROM node:8-alpine
 
 RUN apk update && apk add git && apk add openssh
 
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app/workspace
 WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app/
