@@ -54,31 +54,34 @@ function ensureWorkspace (app) {
   let needsCommit = false;
 
   let promise = Promise.resolve(null);
+
   if (!fs.existsSync(config.workspaceDir)) {
-    debug(`Cloning workspace to ${config.workspaceDir}`);
-
-    promise = promise
-      .then(() => {
-        return exec(`git clone ${gitUrl} ${config.workspaceDir}`);
-      })
-
-      // Make sure we have the correct branch
-      .then(() => {
-        return execWs(`git checkout ${branch}`).catch(err => {
-          if (err.message.includes('did not match any file(s)')) {
-            return execWs('git checkout master')
-              // Ignore errors from this as there may not be a master
-              // branch
-              .catch(() => true)
-              .then(() => {
-                return execWs(`git checkout -b ${branch}`);
-              });
-          } else {
-            throw err;
-          }
-        });
-      });
+    debug('Creating workspace dir: ', config.workspaceDir);
+    fs.mkdirSync(config.workspaceDir);
   }
+  debug(`Cloning workspace to ${config.workspaceDir}`);
+
+  promise = promise
+    .then(() => {
+      return exec(`git clone ${gitUrl} ${config.workspaceDir}`);
+    })
+
+    // Make sure we have the correct branch
+    .then(() => {
+      return execWs(`git checkout ${branch}`).catch(err => {
+        if (err.message.includes('did not match any file(s)')) {
+          return execWs('git checkout master')
+          // Ignore errors from this as there may not be a master
+          // branch
+            .catch(() => true)
+            .then(() => {
+              return execWs(`git checkout -b ${branch}`);
+            });
+        } else {
+          throw err;
+        }
+      });
+    });
 
   promise = promise.then(() => {
     if (!fs.existsSync(pkgFile)) {
