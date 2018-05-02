@@ -5,7 +5,6 @@ const util = require('util');
 
 const _ = require('lodash');
 const debug = require('debug')('lunchbadger-workspace:workspace');
-const exec = util.promisify(require('child_process').exec);
 const ncp = util.promisify(require('ncp'));
 
 const {execWs} = require('./util');
@@ -16,7 +15,6 @@ const PROJECT_TEMPLATE = path.normalize(
 
 function ensureWorkspace (app) {
   const wsName = `${config.userName}-${config.userEnv}`;
-  const {branch, gitUrl} = config;
 
   let Workspace = app.workspace.models.Workspace;
   let TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
@@ -49,42 +47,11 @@ function ensureWorkspace (app) {
     return _.mergeWith.apply(_, sources);
   }.bind(Workspace);
 
-  let pkgFile = path.join(config.workspaceDir, 'package.json');
-
   let needsCommit = false;
-
   let promise = Promise.resolve(null);
 
-  if (!fs.existsSync(config.workspaceDir)) {
-    debug('Creating workspace dir: ', config.workspaceDir);
-    fs.mkdirSync(config.workspaceDir);
-  }
-  debug(`Cloning workspace to ${config.workspaceDir}`);
-
-  promise = promise
-    .then(() => {
-      return exec(`git clone ${gitUrl} ${config.workspaceDir}`);
-    })
-
-    // Make sure we have the correct branch
-    .then(() => {
-      return execWs(`git checkout ${branch}`).catch(err => {
-        if (err.message.includes('did not match any file(s)')) {
-          return execWs('git checkout master')
-          // Ignore errors from this as there may not be a master
-          // branch
-            .catch(() => true)
-            .then(() => {
-              return execWs(`git checkout -b ${branch}`);
-            });
-        } else {
-          throw err;
-        }
-      });
-    });
-
   promise = promise.then(() => {
-    if (!fs.existsSync(pkgFile)) {
+    if (!fs.existsSync(path.join(config.workspaceDir, 'package.json'))) {
       debug('Creating new LoopBack project');
 
       const createFromTemplate = util.promisify(
