@@ -3,8 +3,7 @@ module.exports = function (server) {
   // Install a `/` route that returns server status
   let router = server.loopback.Router();
   router.get('/', server.loopback.status());
-  router.get('/api/forecast', handleForecast);
-  router.get('/api/Forecast', handleForecast);
+  router.get('/api/forecasts', handleForecast);
   server.use(router);
 };
 
