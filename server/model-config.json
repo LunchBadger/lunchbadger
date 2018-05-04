@@ -54,23 +54,11 @@
     "dataSource": "db",
     "public": false
   },
-  "Forecast": {
-    "dataSource": "db",
-    "public": true
-  },
   "Plan": {
     "dataSource": "db",
     "public": false
   },
   "Tier": {
-    "dataSource": "db",
-    "public": false
-  },
-  "ForecastAPI": {
-    "dataSource": "db",
-    "public": false
-  },
-  "ForecastAPIPlan": {
     "dataSource": "db",
     "public": false
   },
