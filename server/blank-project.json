@@ -5,6 +5,7 @@
   },
   "models": {
     "Project": {
+      "USER": "{\"id\":\"USER\",\"name\":\"main\",\"gateways\":[],\"apis\":[],\"functions\":[],\"serviceEndpoints\":[],\"microservices\":[],\"apiEndpoints\":[],\"connections\":[],\"states\":[],\"portals\":[]}"
     }
   }
 }
