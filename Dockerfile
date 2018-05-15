@@ -27,4 +27,4 @@ COPY . /usr/src/app
 ENV NODE_ENV production
 
 
-CMD [ "npm", "start" ]
+CMD [ "node", "." ]
