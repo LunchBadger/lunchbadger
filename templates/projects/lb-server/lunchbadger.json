@@ -1,0 +1,11 @@
+{
+  "ids": {
+    "Project": 1,
+    "Forecast": 1
+  },
+  "models": {
+    "Project": {
+      "demo-dev": "{\"id\":\"demo-dev\",\"name\":\"main\",\"gateways\":[],\"apis\":[],\"functions\":[],\"serviceEndpoints\":[],\"apiEndpoints\":[],\"connections\":[],\"states\":[],\"portals\":[]}"
+    }
+  }
+}

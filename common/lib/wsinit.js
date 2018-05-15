@@ -1,18 +1,21 @@
+'use strict';
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
 
 const _ = require('lodash');
 const debug = require('debug')('lunchbadger-workspace:workspace');
+const ncp = util.promisify(require('ncp'));
 
 const {execWs} = require('./util');
 const config = require('./config');
-const wsName = `${config.userName}-${config.userEnv}`;
 
 const PROJECT_TEMPLATE = path.normalize(
   path.join(__dirname, '../../server/blank-project.json'));
 
 function ensureWorkspace (app) {
+  const wsName = `${config.userName}-${config.userEnv}`;
+
   let Workspace = app.workspace.models.Workspace;
   let TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
 
@@ -70,9 +73,6 @@ function ensureWorkspace (app) {
       return execWs('git add -A')
         .then(() => {
           return execWs('git commit -m "New LunchBadger project"');
-        })
-        .then(() => {
-          return execWs('git push origin master');
         });
     }
   });
@@ -86,8 +86,6 @@ function ensureWorkspace (app) {
     return execWs('git show --format="format:%H" -s');
   }).then((rev) => {
     return rev.trim();
-  }).catch(err => {
-    console.log('Error initializing project. Shutdown initiated. Error details: ', err);
   });
 
   return promise;
@@ -98,10 +96,7 @@ function ensureProjectFileExists () {
 
   if (!fs.existsSync(projectFile)) {
     debug(`creating a new project file (${projectFile})`);
-    let projectFileContent = fs.readFileSync(PROJECT_TEMPLATE, {encoding: 'UTF-8'});
-    projectFileContent = projectFileContent.replace(/USER/g, wsName);
-    fs.writeFileSync(projectFile, projectFileContent);
-    return Promise.resolve(true);
+    return ncp(PROJECT_TEMPLATE, projectFile).then(() => true);
   }
 
   return Promise.resolve(false);
