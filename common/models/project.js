@@ -28,6 +28,7 @@ module.exports = function (Project) {
       this.functions = [];
       this.serviceEndpoints = [];
       this.apiEndpoints = [];
+      this.microServices = [];
       this.apis = [];
       this.portals = [];
       this.gateways = [];
