@@ -21,11 +21,9 @@
     "loopback-workspace": "^3.42.0",
     "mkdirp": "^0.5.1",
     "morgan": "^1.9.0",
-    "ncp": "^2.0.0",
     "nodemon": "git+https://github.com/rlisagor/nodemon.git#no-cwd-installable",
     "rimraf": "^2.6.2",
-    "serve-favicon": "^2.4.5",
-    "shelljs": "^0.7.8"
+    "serve-favicon": "^2.4.5"
   },
   "devDependencies": {
     "eslint-config-standard": "10.2.1",
