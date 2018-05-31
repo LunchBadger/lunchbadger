@@ -88,6 +88,7 @@ function ensureWorkspace (app) {
     return rev.trim();
   }).catch(err => {
     console.log('Error initializing project. Shutdown initiated. Error details: ', err);
+    process.exit(1);
   });
 
   return promise;
