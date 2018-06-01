@@ -67,28 +67,26 @@ function ensureWorkspace (app) {
 
   promise = promise.then(() => {
     if (needsCommit) {
-      return execWs('git add -A')
-        .then(() => {
-          return execWs('git commit -m "New LunchBadger project"');
-        })
-        .then(() => {
-          return execWs('git push origin master');
-        });
+      execWs('git add -A');
+      execWs('git commit -m "New LunchBadger project"');
+      execWs('git push origin master');
     }
   });
 
   promise = promise.then(() => {
     // Make sure we reload project data, since it may have changed
-    const connector = app.dataSources.db.connector;
-    return util.promisify(connector.loadFromFile.bind(connector))();
-  }).then(() => {
-    debug(`Managing workspace in ${config.workspaceDir}`);
-    return execWs('git show --format="format:%H" -s');
-  }).then((rev) => {
-    return rev.trim();
-  }).catch(err => {
-    console.log('Error initializing project. Shutdown initiated. Error details: ', err);
-    process.exit(1);
+    try {
+      const connector = app.dataSources.db.connector;
+      util.promisify(connector.loadFromFile.bind(connector))();
+      debug(`Managing workspace in ${config.workspaceDir}`);
+      let rev = execWs('git show --format="format:%H" -s');
+      console.log(rev);
+
+      return rev.trim();
+    } catch (err) {
+      console.log('Error initializing project. Shutdown initiated. Error details: ', err);
+      process.exit(1);
+    }
   });
 
   return promise;

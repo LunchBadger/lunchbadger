@@ -65,46 +65,39 @@ module.exports = function (Project) {
   };
 
   Project.observe('after save', function (ctx, next) {
-    execWs('git status')
-
+    try {
+      let rev, success;
+      let stdout = execWs('git status');
       // Commit, if necessary
-      .then((stdout) => {
-        if (!stdout.includes('nothing to commit')) {
-          debug('changes detected, committing');
-          return commit();
-        } else {
-          debug('nothing to commit');
-        }
-      })
+      if (!stdout.includes('nothing to commit')) {
+        debug('changes detected, committing');
+        rev = commit();
+      } else {
+        debug('nothing to commit');
+      }
 
       // Remember the new revision
-      .then(rev => {
-        if (rev) {
-          Project.workspaceStatus.revision = rev;
-          return Project.workspaceStatus.save();
-        }
-      })
+      if (rev) {
+        Project.workspaceStatus.revision = rev;
+        Project.workspaceStatus.save();
+      }
 
       // Push to Git
-      .then(() => {
-        debug('pushing');
-        return push(config.branch);
-      })
+      debug('pushing');
+      success = push(config.branch);
 
       // Return result
-      .then(success => {
-        if (!success) {
-          debug('conflict detected');
-          let err = new Error('Conflict in Git repository');
-          err.status = 409;
-          next(err);
-        } else {
-          next(null);
-        }
-      })
-      .catch(err => {
-        debug(err);
-        next(new Error('Error saving project'));
-      });
+      if (!success) {
+        debug('conflict detected');
+        let err = new Error('Conflict in Git repository');
+        err.status = 409;
+        next(err);
+      } else {
+        next(null);
+      }
+    } catch (err) {
+      debug(err);
+      next(new Error('Error saving project'));
+    }
   });
 };
