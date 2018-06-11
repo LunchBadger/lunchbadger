@@ -22,7 +22,6 @@ module.exports = function (app, cb) {
 
   [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig].forEach(m => {
     m.observe('after save', (ctx, next) => {
-      console.log(ctx.Model);
       try {
         saveToGit(next, `LunchBadger: Changes in ${m.modelName}`);
       } catch (err) {
@@ -31,8 +30,6 @@ module.exports = function (app, cb) {
       }
     });
     m.observe('after delete', (ctx, next) => {
-      console.log(ctx.Model);
-
       try {
         saveToGit(next, `LunchBadger: Delete of ${m.modelName}`);
       } catch (err) {
