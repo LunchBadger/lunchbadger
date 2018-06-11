@@ -7,6 +7,10 @@ function execWs (cmd) {
   debuggit(cmd, res);
   return res;
 }
+function rev () {
+  let rev = execWs('git show --format="format:%H" -s');
+  debuggit('local revision', rev);
+}
 
 function commit (msg = 'Changes via LunchBadger') {
   execWs('git add -A');
@@ -69,6 +73,7 @@ async function selfDestruct () {
 module.exports = {
   execWs,
   commit,
+  rev,
   push,
   saveToGit,
   reset,
