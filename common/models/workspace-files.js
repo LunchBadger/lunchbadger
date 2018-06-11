@@ -1,5 +1,6 @@
 let DirectoryAsObject = require('directory-as-object');
 const path = require('path');
+const {saveToGit} = require('../lib/util');
 let fileProvider = new DirectoryAsObject({
   rootPath: path.join(process.cwd(), 'workspace'),
   ignorePatterns: [/node_modules/, /\.git/, /package-lock\.json/, /yarn\.lock/, /lunchbadger\.json/]
@@ -10,7 +11,7 @@ module.exports = function (WorkspaceFiles) {
   };
   WorkspaceFiles.updateFiles = function ({files}, cb) {
     fileProvider.deserialize(files);
-    cb();
+    saveToGit(cb, 'LunchBadger: Files updated');
   };
   WorkspaceFiles.remoteMethod('getFiles', {
     description: 'get all files recursively from /workspace folder',

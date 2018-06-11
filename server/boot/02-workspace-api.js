@@ -1,6 +1,7 @@
 const cors = require('cors');
 const config = require('../../common/lib/config');
-
+const {saveToGit} = require('../../common/lib/util');
+const debug = require('debug')('lunchbadger-workspace:save');
 process.env.WORKSPACE_DIR = config.workspaceDir;
 const workspace = require('loopback-workspace');
 
@@ -13,12 +14,50 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, PackageDefinition} = workspace.models;
+  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
+  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty].forEach(m => {
+    m.observe('after save', (ctx, next) => {
+      console.log(ctx.Model);
+      try {
+        saveToGit(next, `LunchBadger: Changes in ${m.modelName}`);
+      } catch (err) {
+        debug(err);
+        next(new Error(`Error saving ${m.modelName}`));
+      }
+    });
+    m.observe('after delete', (ctx, next) => {
+      console.log(ctx.Model);
+
+      try {
+        saveToGit(next, `LunchBadger: Delete of ${m.modelName}`);
+      } catch (err) {
+        debug(err);
+        next(new Error(`Error saving delete ${m.modelName}`));
+      }
+    });
+  });
+
+  DataSourceDefinition.observe('after save', (ctx, next) => {
+    try {
+      saveToGit(next, 'LunchBadger: Changes in DataSources');
+    } catch (err) {
+      debug(err);
+      next(new Error('Error saving project'));
+    }
+  });
+  ModelDefinition.observe('after save', (ctx, next) => {
+    try {
+      saveToGit(next, 'LunchBadger: Changes in Models');
+    } catch (err) {
+      debug(err);
+      next(new Error('Error saving project'));
+    }
+  });
   DataSourceDefinition.observe('before save', (ctx, next) => {
     if (ctx.instance.connector === 'memory') {
       // memory connector is built in
