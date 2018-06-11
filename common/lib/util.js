@@ -10,6 +10,7 @@ function execWs (cmd) {
 function rev () {
   let rev = execWs('git show --format="format:%H" -s');
   debuggit('local revision', rev);
+  return rev;
 }
 
 function commit (msg = 'Changes via LunchBadger') {

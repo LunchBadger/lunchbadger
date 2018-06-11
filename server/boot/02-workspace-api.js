@@ -14,13 +14,13 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty} = workspace.models;
+  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty].forEach(m => {
+  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig].forEach(m => {
     m.observe('after save', (ctx, next) => {
       console.log(ctx.Model);
       try {
