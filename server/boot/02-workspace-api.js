@@ -39,22 +39,6 @@ module.exports = function (app, cb) {
     });
   });
 
-  DataSourceDefinition.observe('after save', (ctx, next) => {
-    try {
-      saveToGit(next, 'LunchBadger: Changes in DataSources');
-    } catch (err) {
-      debug(err);
-      next(new Error('Error saving project'));
-    }
-  });
-  ModelDefinition.observe('after save', (ctx, next) => {
-    try {
-      saveToGit(next, 'LunchBadger: Changes in Models');
-    } catch (err) {
-      debug(err);
-      next(new Error('Error saving project'));
-    }
-  });
   DataSourceDefinition.observe('before save', (ctx, next) => {
     if (ctx.instance.connector === 'memory') {
       // memory connector is built in
