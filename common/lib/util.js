@@ -34,7 +34,7 @@ function push (branch) {
   }
 }
 
-function saveToGit (next, msg) {
+function saveToGit (msg, next) {
   let success;
   let stdout = execWs('git status');
   // Commit, if necessary

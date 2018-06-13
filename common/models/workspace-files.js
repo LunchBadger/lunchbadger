@@ -11,7 +11,7 @@ module.exports = function (WorkspaceFiles) {
   };
   WorkspaceFiles.updateFiles = function ({files}, cb) {
     fileProvider.deserialize(files);
-    saveToGit(cb, 'LunchBadger: Files updated');
+    saveToGit('LunchBadger: Files updated', cb);
   };
   WorkspaceFiles.remoteMethod('getFiles', {
     description: 'get all files recursively from /workspace folder',

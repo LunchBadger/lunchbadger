@@ -65,7 +65,7 @@ module.exports = function (Project) {
 
   Project.observe('after save', function (ctx, next) {
     try {
-      saveToGit(next, 'LunchBadger: Changes in Project');
+      saveToGit('LunchBadger: Changes in Project', next);
     } catch (err) {
       debug(err);
       next(new Error('Error saving project'));
