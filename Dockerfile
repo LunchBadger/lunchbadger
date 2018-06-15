@@ -13,6 +13,8 @@ RUN npm install loopback-connector-rest \
                 loopback-connector-mongodb \
                 loopback-connector-redis \
                 loopback-connector-mysql \
+                loopback-connector-soap \
+                loopback-connector-postgresql \
                 loopback-connector-manta \
                 LunchBadger/loopback-connector-salesforce#no-cldr \ 
                 AdChain/loopback-connector-web3 \
