@@ -1,7 +1,6 @@
 const async = require('async');
 const debug = require('debug')('lunchbadger-workspace:project');
-const {execWs, commit, push} = require('../lib/util');
-const config = require('../lib/config');
+const {saveToGit} = require('../lib/util');
 
 module.exports = function (Project) {
   Project.prototype.clearProject = function (cb) {
@@ -66,35 +65,7 @@ module.exports = function (Project) {
 
   Project.observe('after save', function (ctx, next) {
     try {
-      let rev, success;
-      let stdout = execWs('git status');
-      // Commit, if necessary
-      if (!stdout.includes('nothing to commit')) {
-        debug('changes detected, committing');
-        rev = commit();
-      } else {
-        debug('nothing to commit');
-      }
-
-      // Remember the new revision
-      if (rev) {
-        Project.workspaceStatus.revision = rev;
-        Project.workspaceStatus.save();
-      }
-
-      // Push to Git
-      debug('pushing');
-      success = push(config.branch);
-
-      // Return result
-      if (!success) {
-        debug('conflict detected');
-        let err = new Error('Conflict in Git repository');
-        err.status = 409;
-        next(err);
-      } else {
-        next(null);
-      }
+      saveToGit('LunchBadger: Changes in Project', next);
     } catch (err) {
       debug(err);
       next(new Error('Error saving project'));

@@ -3,15 +3,12 @@ const uuidv1 = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
 const config = require('../../common/lib/config');
-const {reset} = require('../../common/lib/util');
+const {reset, rev} = require('../../common/lib/util');
 const {ensureProjectFileExists} = require('../../common/lib/wsinit');
 
-const DETACHED = '0000000000000000000000000000000000000000';
-
 module.exports = function (app, cb) {
-  const status = app.models.Project.workspaceStatus;
   const branch = config.branch;
-
+  const status = app.models.Project.workspaceStatus;
   const watchUrl = (process.env.WATCH_URL ||
     'http://localhost:3002/change-stream/demo');
   let connected = false;
@@ -23,42 +20,30 @@ module.exports = function (app, cb) {
     let doReset = false;
 
     if (statusUpdate.type === 'push') {
-      debug(`local ${branch} ${status.revision}`);
+      let revision = rev();
+      // The idea is to filter out events that have same commit hash as local
+      // If commit was not driven by LB, then local version will not match external
+      // If the sha hash is the same == it was LBWS who pushed the code
+      debug(`local ${branch} ${revision}`);
       if (statusUpdate.ref.indexOf('/' + branch) >= 0) {
         debug(`branch matched ${statusUpdate.ref}`);
-        if (statusUpdate.after !== status.revision) {
+        if (statusUpdate.after !== revision) {
           debug('upstream revision changed, updating local repo');
           doReset = true;
         } else {
           debug('upstream version is the same as local');
         }
       }
-    } else if (statusUpdate.type === 'initial') {
-      // SK: have no idea how to get there. will never execute
-      debug('received initial branch status');
-
-      for (const ref of Object.keys(statusUpdate.branches)) {
-        if (ref === branch) {
-          const newRev = statusUpdate.branches[ref];
-          // kswiber: Commenting condition below. This condition is preventing 
-          // dependency install on container init.
-          // See: https://github.com/LunchBadger/lunchbadger/issues/24
-          if (/* newRev !== status.revision && */ newRev !== DETACHED) {
-            debug(`${branch} changed from ${status.revision} to ${newRev}`);
-            doReset = true;
-          }
-          break;
-        }
-      }
     }
 
     if (doReset) {
-      debug('resetting workspace');
+      // status.instance is The magic property to notify UI that it should force reload
       status.instance = uuidv1();
+      debug('resetting workspace');
       try {
+        reset(branch);
+        ensureProjectFileExists();
         await status.save();
-        await reset(branch);
-        await ensureProjectFileExists();
         await app.models.WorkspaceStatus.proc.reinstallDeps();
       } catch (err) {
         // eslint-disable-next-line no-console

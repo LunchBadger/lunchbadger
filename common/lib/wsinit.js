@@ -60,9 +60,8 @@ function ensureWorkspace (app) {
   });
 
   promise = promise.then(() => {
-    return ensureProjectFileExists().then((createdProject) => {
-      needsCommit = needsCommit || createdProject;
-    });
+    let createdProject = ensureProjectFileExists();
+    needsCommit = needsCommit || createdProject;
   });
 
   promise = promise.then(() => {
@@ -100,10 +99,10 @@ function ensureProjectFileExists () {
     let projectFileContent = fs.readFileSync(PROJECT_TEMPLATE, {encoding: 'UTF-8'});
     projectFileContent = projectFileContent.replace(/USER/g, wsName);
     fs.writeFileSync(projectFile, projectFileContent);
-    return Promise.resolve(true);
+    return true;
   }
 
-  return Promise.resolve(false);
+  return false;
 }
 
 module.exports = {

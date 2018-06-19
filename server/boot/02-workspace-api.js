@@ -1,6 +1,7 @@
 const cors = require('cors');
 const config = require('../../common/lib/config');
-
+const {saveToGit} = require('../../common/lib/util');
+const debug = require('debug')('lunchbadger-workspace:save');
 process.env.WORKSPACE_DIR = config.workspaceDir;
 const workspace = require('loopback-workspace');
 
@@ -13,10 +14,29 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, PackageDefinition} = workspace.models;
+  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
+  });
+
+  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig].forEach(m => {
+    m.observe('after save', (ctx, next) => {
+      try {
+        saveToGit(`LunchBadger: Changes in ${m.modelName}`, next);
+      } catch (err) {
+        debug(err);
+        next(new Error(`Error saving ${m.modelName}`));
+      }
+    });
+    m.observe('after delete', (ctx, next) => {
+      try {
+        saveToGit(`LunchBadger: Delete of ${m.modelName}`, next);
+      } catch (err) {
+        debug(err);
+        next(new Error(`Error saving delete ${m.modelName}`));
+      }
+    });
   });
 
   DataSourceDefinition.observe('before save', (ctx, next) => {
