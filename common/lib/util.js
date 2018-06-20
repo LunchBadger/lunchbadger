@@ -1,16 +1,17 @@
 const cp = require('child_process');
 const debug = require('debug')('lunchbadger-workspace:workspace');
 const debuggit = require('debug')('lunchbadger-workspace:git');
-const config = require('./config');
+
 function execWs (cmd) {
   let res = cp.execSync(cmd, {cwd: process.env.WORKSPACE_DIR, encoding: 'UTF-8'});
   debuggit(cmd, res);
   return res;
 }
-function rev () {
-  let rev = execWs('git show --format="format:%H" -s');
-  debuggit('local revision', rev);
-  return rev;
+function revs () {
+  // it can be a lot of revisions, let's keep it to latest 20 min (random number)
+  let output = execWs('git log --format="format:%H" --since="20 minutes"');
+  debuggit('local revisions log', output);
+  return output ? output.split('\n') : [];
 }
 
 function commit (msg = 'Changes via LunchBadger') {
@@ -22,20 +23,24 @@ function commit (msg = 'Changes via LunchBadger') {
 
 function push (branch) {
   try {
-    execWs(`git push origin ${branch}`);
+    // --porcelain => machine readable output in stdout
+    //  <flag> \t <from>:<to> \t <summary> (<reason>) see https://git-scm.com/docs/git-push
+    let result = execWs(`git push origin ${branch} --porcelain`);
+    debuggit(result);
     return true;
   } catch (err) {
-    if (err.message.includes('[rejected]')) {
+    debug(err);
+    if (err.message.includes('!')) { // flag '!' means rejected
+      debug('Conflict: resetting to latest upstream');
       reset(branch);
       return false;
-    } else {
+    } else { // Connection errors etc. 
       throw err;
     }
   }
 }
 
 function saveToGit (msg, next) {
-  let success;
   let stdout = execWs('git status');
   // Commit, if necessary
   if (!stdout.includes('nothing to commit')) {
@@ -45,19 +50,7 @@ function saveToGit (msg, next) {
   } else {
     debug('nothing to commit');
   }
-  // Push to Git
-  debug('pushing');
-  success = push(config.branch);
-
-  // Return result
-  if (!success) {
-    debug('conflict detected');
-    let err = new Error('Conflict in Git repository');
-    err.status = 409;
-    next(err);
-  } else {
-    next(null);
-  }
+  next(null);
 }
 
 function reset (branch) {
@@ -74,7 +67,7 @@ async function selfDestruct () {
 module.exports = {
   execWs,
   commit,
-  rev,
+  revs,
   push,
   saveToGit,
   reset,
