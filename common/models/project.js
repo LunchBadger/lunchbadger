@@ -1,8 +1,16 @@
 const async = require('async');
 const debug = require('debug')('lunchbadger-workspace:project');
-const {saveToGit} = require('../lib/util');
+const {saveToGit, push} = require('../lib/util');
+const config = require('../lib/config');
+const pushInterval = parseInt(process.env.LB_PUSH_INTERVAL) || 10000;
 
 module.exports = function (Project) {
+  setInterval(() => {
+    // Push to Git
+    debug('pushing');
+    push(config.branch);
+  }, pushInterval);
+
   Project.prototype.clearProject = function (cb) {
     let wsModels = Project.app.workspace.models;
 
