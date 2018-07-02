@@ -23,7 +23,15 @@ function commit (msg = 'Changes via LunchBadger') {
 
 function push (branch) {
   try {
-    // --porcelain => machine readable output in stdout
+    // git push does request to actual git server
+    // And it takes time to process ssh key, so it can overload git server
+    // Every 10 sec push with 30 users overloads gitea
+    // So we need to push only if new commits have been added
+    // git log origin/master..master gives empty string if no new commits
+    let hasNewCommits = execWs(`git log origin/${branch}..${branch}`);
+    if (!hasNewCommits) { return true; }
+
+    // --porcelain => machine readable output in stdout 
     //  <flag> \t <from>:<to> \t <summary> (<reason>) see https://git-scm.com/docs/git-push
     let result = execWs(`git push origin ${branch} --porcelain`);
     debuggit(result);
