@@ -1,5 +1,5 @@
 const EventSource = require('eventsource');
-const uuidv1 = require('uuid').v1;
+const uuid = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
 const config = require('../../common/lib/config');
@@ -46,13 +46,20 @@ module.exports = function (app, cb) {
 
     if (doReset) {
       // status.instance is The magic property to notify UI that it should force reload
-      status.instance = uuidv1();
-      debug('resetting workspace');
       try {
-        reset(branch);
-        ensureProjectFileExists();
-        await status.save();
-        await app.models.WorkspaceStatus.proc.reinstallDeps();
+        if (statusUpdate.repoName === 'dev') {
+          debug('resetting workspace');
+
+          status.instance = uuid();
+          reset(branch);
+          ensureProjectFileExists();
+          await status.save();
+          await app.models.WorkspaceStatus.proc.reinstallDeps();
+        } else {
+          debug('resetting functions state');
+          status.sls_api = uuid();
+          await status.save();
+        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);
