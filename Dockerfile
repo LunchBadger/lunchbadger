@@ -29,4 +29,4 @@ COPY . /usr/src/app
 ENV NODE_ENV production
 
 
-CMD [ "node", "." ]
+ENTRYPOINT for i in $(env | grep '_SERVICE_\|_PORT' | cut -f1 -d=); do unset $i; done; node .
