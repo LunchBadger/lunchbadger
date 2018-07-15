@@ -43,6 +43,11 @@ module.exports = function (app, cb) {
         }
       }
     }
+    if (statusUpdate.repoName === 'dev') {
+      status.ws_git = statusUpdate.after;
+    } else {
+      status.fn_git = statusUpdate.after;
+    }
 
     if (doReset) {
       // status.instance is The magic property to notify UI that it should force reload
@@ -58,12 +63,12 @@ module.exports = function (app, cb) {
         } else {
           debug('resetting functions state');
           status.sls_api = uuid();
-          await status.save();
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);
       };
+      await status.save();
     }
   });
 
