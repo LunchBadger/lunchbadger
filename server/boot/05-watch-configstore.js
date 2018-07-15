@@ -68,8 +68,8 @@ module.exports = function (app, cb) {
         // eslint-disable-next-line no-console
         console.error(err);
       };
-      await status.save();
     }
+    await status.save();
   });
 
   es.addEventListener('open', () => {
