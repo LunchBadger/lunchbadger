@@ -41,6 +41,9 @@ module.exports = function (app, cb) {
           await app.models.WorkspaceStatus.proc.reinstallDeps();
         } else {
           debug('resetting functions state');
+          // TODO: this is not needed, it is just to test refresh before UI hot reload implementation
+          status.instance = uuid();
+          // this is the field UI should rely on for function hot reload
           status.sls_api = uuid();
         }
       } catch (err) {
