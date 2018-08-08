@@ -1,9 +1,9 @@
 const EventSource = require('eventsource');
-const uuidv1 = require('uuid').v1;
+const uuid = require('uuid').v1;
 const debug = require('debug')('lunchbadger-workspace:workspace');
 
 const config = require('../../common/lib/config');
-const {reset, revs} = require('../../common/lib/util');
+const {reset} = require('../../common/lib/util');
 const {ensureProjectFileExists} = require('../../common/lib/wsinit');
 
 module.exports = function (app, cb) {
@@ -20,44 +20,38 @@ module.exports = function (app, cb) {
     let doReset = false;
 
     if (statusUpdate.type === 'push') {
-      // SK: Warning: any bugs here will result in unexpected refreshes on UI
-      // DO NOT refactor for fun
-      //  
-      // The idea is to filter out events that have same commit hash as local
-      // If commit was not driven by LB, then local version will not have such hash
-      // And we expect that notification will arrive in reasonable time to compare with latest commits only
-      // Local version can be ahead of master, that is ok and will be resolved on next push cycle
-      // That is why we can't compare only top local commit
-      debug(`local ${branch}`);
-      if (statusUpdate.ref.indexOf('/' + branch) >= 0) {
-        let revisions = revs();
-        debug(`branch matched ${statusUpdate.ref}`);
-        // revisions.length === 0 means that there were no local commits in the nearest past
-        // and with events arrive in reasonable time we assume it is new 
-        // revisions.indexOf(statusUpdate.after) === -1 // no such commit found locally
-        if (revisions.length === 0 || revisions.indexOf(statusUpdate.after) === -1) {
-          debug('upstream revision changed, updating local repo');
-          doReset = true;
-        } else {
-          debug('upstream version is the same as local');
-        }
-      }
+      doReset = statusUpdate.isExternal;
+    }
+    if (statusUpdate.repoName === 'dev') {
+      status.ws_git = statusUpdate.after;
+    } else {
+      status.fn_git = statusUpdate.after;
     }
 
     if (doReset) {
       // status.instance is The magic property to notify UI that it should force reload
-      status.instance = uuidv1();
-      debug('resetting workspace');
       try {
-        reset(branch);
-        ensureProjectFileExists();
-        await status.save();
-        await app.models.WorkspaceStatus.proc.reinstallDeps();
+        if (statusUpdate.repoName === 'dev') {
+          debug('resetting workspace');
+
+          status.instance = uuid();
+          reset(branch);
+          ensureProjectFileExists();
+          await status.save();
+          await app.models.WorkspaceStatus.proc.reinstallDeps();
+        } else {
+          debug('resetting functions state');
+          // TODO: this is not needed, it is just to test refresh before UI hot reload implementation
+          status.instance = uuid();
+          // this is the field UI should rely on for function hot reload
+          status.sls_api = uuid();
+        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);
       };
     }
+    await status.save();
   });
 
   es.addEventListener('open', () => {
