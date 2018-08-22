@@ -9,10 +9,16 @@ function execWs (cmd) {
 }
 
 async function execWsAsync (cmd) {
-  let res = await cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR});
-  let output = await streamToString(res.stdout);
-  debuggit(cmd, output);
-  return output;
+  return Promise((resolve, reject) => {
+    cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR}, (err, stdout, stderr) => {
+      if (err) {
+        debuggit(err);
+        return reject(err);
+      }
+      debuggit(cmd, stdout, stderr);
+      resolve(stdout);
+    });
+  });
 }
 
 function revs () {
@@ -82,15 +88,6 @@ function reset (branch) {
 async function selfDestruct () {
   debug('Instructed to shutdown process');
   process.exit();
-}
-
-function streamToString (stream) {
-  const chunks = [];
-  return new Promise((resolve, reject) => {
-    stream.on('data', chunks.push);
-    stream.on('error', reject);
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-  });
 }
 
 module.exports = {
