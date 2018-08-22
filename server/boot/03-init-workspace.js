@@ -5,10 +5,12 @@ const debug = require('debug')('lunchbadger-workspace:init:3');
 module.exports = async (app, cb) => {
   try {
     let rev = await ensureWorkspace(app);
+    const id = uuidv1();
+    debug('Starting App with id ', id);
     let status = await app.models.WorkspaceStatus.create({
       running: false,
       output: '',
-      instance: uuidv1(),
+      instance: id,
       revision: rev
     });
     app.models.Project.workspaceStatus = status;

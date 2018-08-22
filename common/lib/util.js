@@ -7,6 +7,20 @@ function execWs (cmd) {
   debuggit(cmd, res);
   return res;
 }
+
+async function execWsAsync (cmd) {
+  return new Promise((resolve, reject) => {
+    cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR}, (err, stdout, stderr) => {
+      if (err) {
+        debuggit(err);
+        return reject(err);
+      }
+      debuggit(cmd, stdout, stderr);
+      resolve(stdout);
+    });
+  });
+}
+
 function revs () {
   // it can be a lot of revisions, let's keep it to latest 20 min (random number)
   let output = execWs('git log --format="format:%H" --since="20 minutes"');
@@ -21,19 +35,22 @@ function commit (msg = 'Changes via LunchBadger') {
   return rev.trim();
 }
 
-function push (branch) {
+async function push (branch) {
   try {
     // git push does request to actual git server
     // And it takes time to process ssh key, so it can overload git server
     // Every 10 sec push with 30 users overloads gitea
     // So we need to push only if new commits have been added
     // git log origin/master..master gives empty string if no new commits
-    let hasNewCommits = execWs(`git log origin/${branch}..${branch}`);
+    let hasNewCommits = await execWsAsync(`git log origin/${branch}..${branch}`);
+
     if (!hasNewCommits) { return true; }
 
     // --porcelain => machine readable output in stdout 
     //  <flag> \t <from>:<to> \t <summary> (<reason>) see https://git-scm.com/docs/git-push
-    let result = execWs(`git push origin ${branch} --porcelain`);
+    // Note async version usage: 
+    // sync version will block process for time to push (5 sec) and readyness probe will fail
+    let result = await execWsAsync(`git push origin ${branch} --porcelain`);
     debuggit(result);
     return true;
   } catch (err) {
@@ -43,6 +60,7 @@ function push (branch) {
       reset(branch);
       return false;
     } else { // Connection errors etc. 
+      debug(err);
       throw err;
     }
   }
