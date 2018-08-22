@@ -10,7 +10,7 @@ function execWs (cmd) {
 
 async function execWsAsync (cmd) {
   let res = await cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR});
-  let output = streamToString(res.stdout);
+  let output = await streamToString(res.stdout);
   debuggit(cmd, output);
   return output;
 }
