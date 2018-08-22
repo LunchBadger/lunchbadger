@@ -9,7 +9,7 @@ function execWs (cmd) {
 }
 
 async function execWsAsync (cmd) {
-  return Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR}, (err, stdout, stderr) => {
       if (err) {
         debuggit(err);
