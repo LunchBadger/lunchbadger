@@ -1,5 +1,5 @@
 {
-  "loopback-component-explorer": {
+  "@lunchbadger/loopback-component-explorer": {
     "mountPath": "/explorer"
   }
 }

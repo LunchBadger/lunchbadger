@@ -17,7 +17,6 @@ template.package = {
   'scripts': {
     'lint': 'eslint .',
     'start': 'node .',
-    'postinstall': 'npm uninstall loopback-component-explorer && npm install LunchBadger/loopback-component-explorer',
     'posttest': 'npm run lint && nsp check'
   },
   'dependencies': {
@@ -25,7 +24,7 @@ template.package = {
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
     'strong-error-handler': '^2.0.0',
-    'loopback-component-explorer': 'LunchBadger/loopback-component-explorer'
+    '@lunchbadger/loopback-component-explorer': '1.0.0'
   },
   'devDependencies': {
     'eslint-config-standard': '10.2.1',
@@ -68,10 +67,11 @@ template.server = {
   },
 
   config: [
-    {name: 'restApiRoot', value: '/api'},
-    {name: 'host', value: '0.0.0.0'}, // Listen on all interfaces
-    {name: 'port', value: 3000},
-    {name: 'remoting',
+    { name: 'restApiRoot', value: '/api' },
+    { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
+    { name: 'port', value: 3000 },
+    {
+      name: 'remoting',
       value: {
         context: false,
         rest: {
@@ -88,7 +88,8 @@ template.server = {
           limit: '100kb'
         },
         cors: false
-      }}
+      }
+    }
   ],
 
   modelConfigs: [
@@ -99,7 +100,7 @@ template.server = {
 
   componentConfigs: [
     {
-      name: 'loopback-component-explorer',
+      name: '@lunchbadger/loopback-component-explorer',
       value: {
         mountPath: '/explorer'
       }
