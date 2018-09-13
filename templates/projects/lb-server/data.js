@@ -24,7 +24,7 @@ template.package = {
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
     'strong-error-handler': '^2.0.0',
-    '@lunchbadger/loopback-component-explorer': '1.0.0'
+    '@lunchbadger/loopback-component-explorer': '3.0.0'
   },
   'devDependencies': {
     'eslint-config-standard': '10.2.1',
