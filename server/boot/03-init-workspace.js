@@ -6,12 +6,11 @@ module.exports = async (app, cb) => {
   try {
     let rev = await ensureWorkspace(app);
     const id = uuidv1();
-    debug('Starting App with id ', id);
+    debug('Starting App with id ', id, 'local rev', rev);
     let status = await app.models.WorkspaceStatus.create({
       running: false,
       output: '',
-      instance: id,
-      revision: rev
+      instance: id
     });
     app.models.Project.workspaceStatus = status;
     cb();
