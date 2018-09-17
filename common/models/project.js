@@ -7,7 +7,6 @@ const pushInterval = parseInt(process.env.LB_PUSH_INTERVAL) || 1000;
 module.exports = function (Project) {
   setInterval(() => {
     // Push to Git
-    debug('pushing');
     push(config.branch);
   }, pushInterval);
 
