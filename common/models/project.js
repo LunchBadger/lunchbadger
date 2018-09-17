@@ -2,7 +2,7 @@ const async = require('async');
 const debug = require('debug')('lunchbadger-workspace:project');
 const {saveToGit, push} = require('../lib/util');
 const config = require('../lib/config');
-const pushInterval = parseInt(process.env.LB_PUSH_INTERVAL) || 10000;
+const pushInterval = parseInt(process.env.LB_PUSH_INTERVAL) || 1000;
 
 module.exports = function (Project) {
   setInterval(() => {
