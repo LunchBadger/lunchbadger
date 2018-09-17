@@ -34,9 +34,8 @@ function ensureWorkspace (app) {
     // merge into a new object to preserve the originals
     sources.unshift({});
 
-    // when merging arrays, concatenate them (lodash replaces by default)
     sources.push((a, b) => {
-      if (_.isArray(a)) {
+      if (Array.isArray(a)) {
         return a.concat(b);
       }
     });

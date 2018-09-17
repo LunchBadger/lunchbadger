@@ -14,13 +14,13 @@ workspace.middleware('initial', cors({
 
 module.exports = function (app, cb) {
   app.workspace = workspace;
-  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig} = workspace.models;
+  const {DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig, ModelRelation} = workspace.models;
   workspace.listen(app.get('workspacePort'), app.get('host'), () => {
     // eslint-disable-next-line no-console
     console.log(`Workspace listening at http://${app.get('host')}:${app.get('workspacePort')}`);
   });
 
-  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig].forEach(m => {
+  [DataSourceDefinition, PackageDefinition, ModelDefinition, ModelProperty, ModelConfig, ModelRelation].forEach(m => {
     m.observe('after save', (ctx, next) => {
       try {
         saveToGit(`LunchBadger: Changes in ${m.modelName}`, next);
@@ -31,10 +31,10 @@ module.exports = function (app, cb) {
     });
     m.observe('after delete', (ctx, next) => {
       try {
-        saveToGit(`LunchBadger: Delete of ${m.modelName}`, next);
+        saveToGit(`LunchBadger: ${m.modelName} removed`, next);
       } catch (err) {
         debug(err);
-        next(new Error(`Error saving delete ${m.modelName}`));
+        next(new Error(`Error deleting ${m.modelName}`));
       }
     });
   });

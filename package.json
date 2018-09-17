@@ -6,8 +6,7 @@
     "start": "node .",
     "start-sk": "DEBUG=lunchbadger-workspace:* WATCH_URL=http://localhost:3002/change-stream/zu4 GIT_URL=git@gitea.local.io:customer-zu4/dev.git node .",
     "start-staging": "WATCH_URL=http://staging-api.lunchbadger.com/change-stream/demo GIT_URL=http://staging-api.lunchbadger.com/git/demo.git node .",
-    "pretest": "eslint .",
-    "posttest": "nsp check"
+    "pretest": "eslint ."
   },
   "dependencies": {
     "@lunchbadger/loopback-component-explorer": "^3.0.0",
@@ -31,8 +30,7 @@
     "eslint-plugin-node": "4.2.2",
     "eslint-plugin-promise": "3.5.0",
     "eslint-plugin-standard": "3.0.1",
-    "eslint": "^4.9.0",
-    "nsp": "^2.8.1"
+    "eslint": "^4.9.0"
   },
   "repository": {
     "type": "",
