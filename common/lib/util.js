@@ -43,7 +43,6 @@ async function push (branch) {
   if (lock) {
     return true;
   }
-  lock = true;
   try {
     // git push does request to actual git server
     // And it takes time to process ssh key, so it can overload git server
@@ -51,15 +50,15 @@ async function push (branch) {
     // So we need to push only if new commits have been added
     // git log origin/master..master gives empty string if no new commits
     let hasNewCommits = await execWsAsync(`git log origin/${branch}..${branch}`);
-
     if (!hasNewCommits) { return true; }
 
     // --porcelain => machine readable output in stdout 
     //  <flag> \t <from>:<to> \t <summary> (<reason>) see https://git-scm.com/docs/git-push
     // Note async version usage: 
     // sync version will block process for time to push (5 sec) and readyness probe will fail
+    lock = true;
     await execWsAsync(`git push origin ${branch} --porcelain`);
-    debug('pushing')
+    debug('pushing');
     lock = false;
     return true;
   } catch (err) {
