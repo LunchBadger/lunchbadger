@@ -1,21 +1,26 @@
 const cp = require('child_process');
 const debug = require('debug')('lunchbadger-workspace:workspace');
-const debuggit = require('debug')('lunchbadger-workspace:git');
 
 function execWs (cmd) {
-  let res = cp.execSync(cmd, {cwd: process.env.WORKSPACE_DIR, encoding: 'UTF-8'});
-  debuggit(cmd, res);
-  return res;
+  try {
+    let res = cp.execSync(cmd, {
+      cwd: process.env.WORKSPACE_DIR,
+      encoding: 'UTF-8'
+    });
+    return res;
+  } catch (err) {
+    debug(cmd, err);
+    throw err;
+  }
 }
 
 async function execWsAsync (cmd) {
   return new Promise((resolve, reject) => {
     cp.exec(cmd, {cwd: process.env.WORKSPACE_DIR}, (err, stdout, stderr) => {
       if (err) {
-        debuggit(err);
+        debug(err);
         return reject(err);
       }
-      debuggit(cmd, stdout, stderr);
       resolve(stdout);
     });
   });
@@ -24,7 +29,6 @@ async function execWsAsync (cmd) {
 function revs () {
   // it can be a lot of revisions, let's keep it to latest 20 min (random number)
   let output = execWs('git log --format="format:%H" --since="20 minutes"');
-  debuggit('local revisions log', output);
   return output ? output.split('\n') : [];
 }
 
@@ -34,8 +38,12 @@ function commit (msg = 'Changes via LunchBadger') {
   let rev = execWs('git show --format="format:%H" -s');
   return rev.trim();
 }
-
+let lock = false;
 async function push (branch) {
+  if (lock) {
+    return true;
+  }
+  lock = true;
   try {
     // git push does request to actual git server
     // And it takes time to process ssh key, so it can overload git server
@@ -50,11 +58,13 @@ async function push (branch) {
     //  <flag> \t <from>:<to> \t <summary> (<reason>) see https://git-scm.com/docs/git-push
     // Note async version usage: 
     // sync version will block process for time to push (5 sec) and readyness probe will fail
-    let result = await execWsAsync(`git push origin ${branch} --porcelain`);
-    debuggit(result);
+    await execWsAsync(`git push origin ${branch} --porcelain`);
+    debug('pushing')
+    lock = false;
     return true;
   } catch (err) {
     debug(err);
+    lock = false;
     if (err.message.includes('!')) { // flag '!' means rejected
       debug('Conflict: resetting to latest upstream');
       reset(branch);
@@ -72,7 +82,7 @@ function saveToGit (msg, next) {
   if (!stdout.includes('nothing to commit')) {
     debug('changes detected, committing');
     let rev = commit(msg);
-    debuggit('new revision after commit', rev);
+    debug('new revision after commit', rev);
   } else {
     debug('nothing to commit');
   }
