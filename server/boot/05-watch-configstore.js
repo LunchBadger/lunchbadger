@@ -37,7 +37,6 @@ module.exports = function (app, cb) {
           status.instance = uuid();
           reset(branch);
           ensureProjectFileExists();
-          await status.save();
           await app.models.WorkspaceStatus.proc.reinstallDeps();
         } else {
           debug('resetting functions state');
