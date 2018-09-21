@@ -3,6 +3,7 @@ const config = require('../../common/lib/config');
 const {saveToGit} = require('../../common/lib/util');
 const debug = require('debug')('lunchbadger-workspace:save');
 process.env.WORKSPACE_DIR = config.workspaceDir;
+const username = process.env.LB_PRODUCER;
 const workspace = require('loopback-workspace');
 
 workspace.middleware('initial', cors({
@@ -47,7 +48,7 @@ module.exports = function (app, cb) {
 
     const connector = `loopback-connector-${ctx.instance.connector}`;
 
-    PackageDefinition.findById('workspace-dev')
+    PackageDefinition.findById(`${username}-dev`)
       .then(packageDef => {
         // Return to the client right away, install dependencies in the
         // background.
