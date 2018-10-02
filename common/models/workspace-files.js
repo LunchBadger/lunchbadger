@@ -7,12 +7,12 @@ let fileProvider = new DirectoryAsObject({
 });
 module.exports = function (WorkspaceFiles) {
   WorkspaceFiles.getFiles = function (cb) {
-    fileProvider.serialize().then(data => cb(null, data));
+    fileProvider.serialize().then(data => cb(null, data)).catch(cb);
   };
   WorkspaceFiles.updateFiles = function ({files}, cb) {
     fileProvider.deserialize(files).then(() => {
       saveToGit('LunchBadger: Files updated', cb);
-    });
+    }).catch(cb);
   };
   WorkspaceFiles.remoteMethod('getFiles', {
     description: 'get all files recursively from /workspace folder',
