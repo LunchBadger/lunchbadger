@@ -4,7 +4,7 @@ const {saveToGit} = require('../../common/lib/util');
 const debug = require('debug')('lunchbadger-workspace:save');
 process.env.WORKSPACE_DIR = config.workspaceDir;
 const username = process.env.LB_PRODUCER;
-const workspace = require('loopback-workspace');
+const workspace = require('@lunchbadger/loopback-workspace');
 
 workspace.middleware('initial', cors({
   origin: true,
