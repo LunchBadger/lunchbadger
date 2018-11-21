@@ -57,7 +57,8 @@ async function push (branch) {
     // Note async version usage: 
     // sync version will block process for time to push (5 sec) and readyness probe will fail
     lock = true;
-    await execWsAsync(`git pull --rebase origin ${branch}`);
+    await execWsAsync(`git pull --rebase origin ${branch} && git rebase --abort`);
+    // rebase abort in case we enter some conflict
     await execWsAsync(`git push origin ${branch} --porcelain`);
     debug('pushing');
     lock = false;
