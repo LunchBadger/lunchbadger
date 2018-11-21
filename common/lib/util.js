@@ -57,7 +57,7 @@ async function push (branch) {
     // Note async version usage: 
     // sync version will block process for time to push (5 sec) and readyness probe will fail
     lock = true;
-    await execWsAsync(`git pull --rebase origin ${branch} && git rebase --abort`);
+    await execWsAsync(`git pull origin ${branch} --rebase && (git rebase --abort || true)`);
     // rebase abort in case we enter some conflict
     await execWsAsync(`git push origin ${branch} --porcelain`);
     debug('pushing');
@@ -65,13 +65,14 @@ async function push (branch) {
     return true;
   } catch (err) {
     debug(err);
-    lock = false;
     if (err.message.includes('!')) { // flag '!' means rejected
       debug('Conflict: resetting to latest upstream');
       reset(branch);
+      lock = false;
       return false;
     } else { // Connection errors etc. 
       debug(err);
+      lock = false;
       throw err;
     }
   }
