@@ -1,6 +1,9 @@
 ## LunchBadger API
 
 This app can be used as interal API for LunchBadger container application (https://github.com/LunchBadger/lunchbadger-container)
+
+Uses fork of loopback-workspace to operate the underlying loopback project 
+
 Normally, user can start API with client app bundled inside (client app is served from loopback) by running `npm install` script
 and after the installation, the container with all plugins is being downloaded and bundled to single app.
 
