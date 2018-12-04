@@ -57,7 +57,7 @@ async function push (branch) {
     // Note async version usage: 
     // sync version will block process for time to push (5 sec) and readyness probe will fail
     lock = true;
-    await execWsAsync(`git pull origin ${branch} --rebase -s recursive -X ours`);
+    await execWsAsync(`git pull --rebase -s recursive -X ours origin ${branch} `);
     // git pull origin master --rebase -s recursive -X ours 
     // will never have merge conflicts 
     // in case of conflict it always chooses remote changes (-X ours flag)
