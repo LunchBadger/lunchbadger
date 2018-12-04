@@ -1,6 +1,6 @@
-FROM node:8-alpine
+FROM node:8
 
-RUN apk update && apk add git && apk add openssh
+RUN apt-get update && apt-get install git && apt-get install openssh-client
 
 RUN mkdir -p /usr/src/app/workspace
 WORKDIR /usr/src/app
