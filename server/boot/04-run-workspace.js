@@ -11,7 +11,7 @@ module.exports = function (app, cb) {
   let options = {
     cwd: config.workspaceDir,
     watch: [config.workspaceDir],
-    ignore: [path.join(config.workspaceDir, 'package.json')],
+    ignore: [path.join(config.workspaceDir, 'package.json'), path.join(config.workspaceDir, 'lunchbadger.json')],
     script: 'server/server.js',
     delay: 750,
     stdout: false
