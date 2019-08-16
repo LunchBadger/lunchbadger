@@ -1,4 +1,12 @@
-## LunchBadger API
+## LunchBadger API (workspace pods)
+
+The LunchBadger API started out as the main microservice for the application.  It now one of three different types of pod microservices that are deployed on behalf of the user:
+- workspace (LoopBack project)
+- functions (Kubeless serverless functions)
+- gateways (Express Gateway)
+
+The LunchBadger utilizes a [fork of the loopback-workspace api][loopback-workspace-fork].
+
 
 This app can be used as interal API for LunchBadger container application (https://github.com/LunchBadger/lunchbadger-container)
 
@@ -28,3 +36,5 @@ npm run dist force local
 If you want to use LunchBadger API to start loopback api instance only, without creating and waiting for client app to build
 (because you have different container), when no `node_modules` are present simply pass `npm install --ignore-scripts` argument
 to skip post installation script which downloads the client.
+
+[loopback-workspace-fork]: 
